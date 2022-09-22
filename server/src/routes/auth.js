@@ -28,6 +28,12 @@ router.post(
       .trim()
       .isLength({ min: 6 })
       .withMessage('Password must be at least 6 characters long.'),
+    body('role').custom((value) => {
+      if (value !== 'user' && value !== 'admin') {
+        return Promise.reject('Role must be either user or admin.');
+      }
+      return true;
+    }),
   ],
   signup
 );

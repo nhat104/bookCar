@@ -28,6 +28,10 @@ const User = sequelize.define(
       type: Sequelize.STRING,
       allowNull: false,
     },
+    role: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
   },
   { timestamps: true }
 );

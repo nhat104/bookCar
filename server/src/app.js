@@ -2,6 +2,12 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import sequelize from './utils/database.js';
 import authRoutes from './routes/auth.js';
+import Lane from './models/lane.js';
+import PlaceLane from './models/place_lane.js';
+import TimePlaceLane from './models/time_place_lane.js';
+import { lanes } from './constants/timeWithPlace.js';
+import Car from './models/car.js';
+import { cars } from './constants/car.js';
 
 const app = express();
 
@@ -19,12 +25,31 @@ sequelize
   // .sync({ force: true })
   .sync()
   // .then(() => {
-  //   return User.findByPk(1);
+  //   Lane.bulkCreate([
+  //     { name: 'Nam Định - Hà Nội', laneCode: 'ND_HN' },
+  //     { name: 'Hà Nội - Nam Định', laneCode: 'HN_ND' },
+  //   ]);
+
+  //   const places = [];
+  //   for (const lane in lanes) {
+  //     lanes[lane].forEach((place) => {
+  //       places.push({ name: place.name, placeCode: place.code, laneCode: lane });
+  //     });
+  //   }
+  //   PlaceLane.bulkCreate(places);
+
+  //   const times = [];
+  //   for (const lane in lanes) {
+  //     lanes[lane].forEach((place) => {
+  //       place.time.forEach((time) => {
+  //         times.push({ time, placeCode: place.code, laneCode: lane });
+  //       });
+  //     });
+  //   }
+  //   TimePlaceLane.bulkCreate(times);
+
+  //   Car.bulkCreate(cars);
   // })
-  // .then((user) => {
-  //   return user ? user : User.create({ name: 'John Doe', email: 'example@example.com' });
-  // })
-  // .then((user) => user.createCart())
   .then(() => {
     app.listen(8000);
   })

@@ -15,9 +15,9 @@ export const signup = (req, res, next) => {
     console.log(errors.array());
     throw error;
   }
-  const { name, username, email, password } = req.body;
+  const { name, username, email, password, role = 'user' } = req.body;
 
-  return User.create({ name, username, email, password })
+  return User.create({ name, username, email, password, role })
     .then((user) => {
       res.status(201).json({ message: 'User created!', userId: user.id });
     })
@@ -82,6 +82,7 @@ export const login = (req, res, next) => {
             username,
             name: user.name,
             email: user.email,
+            role: user.role,
           },
         },
       });
