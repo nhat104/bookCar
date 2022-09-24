@@ -2,13 +2,13 @@ export const cars = [
   {
     code: 'C1',
     name: 'Car 1',
-    seat: 16,
+    seat: 32,
     price: 100000,
   },
   {
     code: 'C2',
     name: 'Car 2',
-    seat: 32,
+    seat: 16,
     price: 150000,
   },
   {

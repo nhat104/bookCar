@@ -9,14 +9,14 @@ const timePlaceLane = sequelize.define('timePlaceLane', {
     primaryKey: true,
   },
   time: Sequelize.STRING,
-  placeCode: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  laneCode: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
+  // placeCode: {
+  //   type: Sequelize.STRING,
+  //   allowNull: false,
+  // },
+  // laneCode: {
+  //   type: Sequelize.STRING,
+  //   allowNull: false,
+  // },
 });
 
 export default timePlaceLane;

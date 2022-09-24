@@ -5,9 +5,11 @@ import authRoutes from './routes/auth.js';
 import Lane from './models/lane.js';
 import PlaceLane from './models/place_lane.js';
 import TimePlaceLane from './models/time_place_lane.js';
-import { lanes } from './constants/timeWithPlace.js';
 import Car from './models/car.js';
 import { cars } from './constants/car.js';
+import { lanes } from './constants/timeWithPlace.js';
+import Driver from './models/driver.js';
+import { drivers } from './constants/driver.js';
 
 const app = express();
 
@@ -21,34 +23,32 @@ app.use((error, _req, res, _next) => {
   res.status(status).json({ message: 'fail', status, data: message });
 });
 
+PlaceLane.belongsTo(Lane, { constraints: true, onDelete: 'CASCADE' });
+Lane.hasMany(PlaceLane);
+TimePlaceLane.belongsTo(PlaceLane, { constraints: true, onDelete: 'CASCADE' });
+PlaceLane.hasMany(TimePlaceLane);
+
 sequelize
   // .sync({ force: true })
   .sync()
   // .then(() => {
-  //   Lane.bulkCreate([
-  //     { name: 'Nam Định - Hà Nội', laneCode: 'ND_HN' },
-  //     { name: 'Hà Nội - Nam Định', laneCode: 'HN_ND' },
-  //   ]);
-
-  //   const places = [];
-  //   for (const lane in lanes) {
-  //     lanes[lane].forEach((place) => {
-  //       places.push({ name: place.name, placeCode: place.code, laneCode: lane });
-  //     });
-  //   }
-  //   PlaceLane.bulkCreate(places);
-
-  //   const times = [];
-  //   for (const lane in lanes) {
-  //     lanes[lane].forEach((place) => {
-  //       place.time.forEach((time) => {
-  //         times.push({ time, placeCode: place.code, laneCode: lane });
+  //   lanes.forEach((item) => {
+  //     Lane.create({
+  //       name: item.name,
+  //       laneCode: item.code,
+  //     }).then((lane) => {
+  //       item.places.forEach((place) => {
+  //         lane.createPlaceLane({ name: place.name, placeCode: place.code }).then((placeLane) => {
+  //           place.time.forEach((time) => {
+  //             placeLane.createTimePlaceLane({ time });
+  //           });
+  //         });
   //       });
   //     });
-  //   }
-  //   TimePlaceLane.bulkCreate(times);
+  //   });
 
   //   Car.bulkCreate(cars);
+  //   Driver.bulkCreate(drivers)
   // })
   .then(() => {
     app.listen(8000);

@@ -14,6 +14,7 @@ const Driver = sequelize.define('driver', {
   phone: {
     type: Sequelize.STRING,
     allowNull: false,
+    unique: true,
   },
   code: {
     type: Sequelize.STRING,

@@ -14,10 +14,10 @@ const PlaceLane = sequelize.define('placeLane', {
     allowNull: false,
     unique: true,
   },
-  laneCode: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
+  // laneCode: {
+  //   type: Sequelize.STRING,
+  //   allowNull: false,
+  // },
 });
 
 export default PlaceLane;
