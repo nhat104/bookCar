@@ -1,21 +1,9 @@
-import { Button, Card, Container, Grid, Image, Input, Text, Textarea } from '@nextui-org/react';
+import { Button, Card, Grid, Input, Text, Textarea } from '@nextui-org/react';
 
 export default function VehicleInfo() {
   return (
     <Card css={{ p: '$6', mw: '700px' }}>
-      {/* <Card.Header>
-        <Grid.Container css={{ pl: '$6' }}>
-          <Grid xs={12}>
-            <Text h4 css={{ lineHeight: '$xs' }}>
-              Next UI
-            </Text>
-          </Grid>
-          <Grid xs={12}>
-            <Text css={{ color: '$accents8' }}>nextui.org</Text>
-          </Grid>
-        </Grid.Container>
-      </Card.Header> */}
-      <Card.Body css={{ pt: '$2', flexDirection: 'row', borderBottom: ' 1px solid $accents5' }}>
+      <Card.Body css={{ pt: '$2', flexDirection: 'row', borderBottom: '1px solid $accents5' }}>
         <img
           alt="nextui logo"
           src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
@@ -23,17 +11,20 @@ export default function VehicleInfo() {
           height="150px"
         />
         <Grid.Container css={{ pl: '$10', pt: '$8' }}>
-          <Grid xs={12} css={{ d: 'flex', flex: 1 }}>
-            <Grid xs={6}>
-              <Text h5>
-                Hải Bình{' '}
-                <Text color="primary" span>
-                  4.9 (15)
-                </Text>
+          <Grid xs={12}>
+            <Grid xs={2} css={{ ai: 'center' }}>
+              <Text h5>Hải Bình</Text>
+            </Grid>
+            <Grid xs={4} css={{ gap: '$3', ai: 'center', color: '$blue500' }}>
+              <i style={{ marginBottom: '10px' }} className="fa-regular fa-star"></i>
+              <Text color="primary" h5>
+                4.9 (15)
               </Text>
             </Grid>
             <Grid xs={6} css={{ jc: 'end' }}>
-              <Text>200.000đ</Text>
+              <Text color="primary" h4>
+                200.000đ
+              </Text>
             </Grid>
           </Grid>
           <Grid xs={12}>
@@ -50,9 +41,7 @@ export default function VehicleInfo() {
           </Grid>
         </Grid.Container>
       </Card.Body>
-      <Card.Body
-        css={{ fd: 'column', px: '$32', gap: '$10', borderBottom: ' 1px solid $accents5' }}
-      >
+      <Card.Body css={{ fd: 'column', px: '$32', gap: '$10', borderBottom: '1px solid $accents5' }}>
         <Text h4>Nhập thông tin</Text>
         <Input label="Họ tên" rounded fullWidth />
         <Input label="Số điện thoại" labelLeft="(VN)+84" rounded fullWidth />
