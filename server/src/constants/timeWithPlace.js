@@ -1,4 +1,4 @@
-const ND_HN = [
+const ND = [
   {
     code: 'HH',
     name: 'Cổng chào Hải Hậu',
@@ -21,7 +21,7 @@ const ND_HN = [
   },
 ];
 
-const HN_ND = [
+const HN = [
   {
     code: 'GL',
     name: 'Gia Lâm',
@@ -49,15 +49,15 @@ const HN_ND = [
   },
 ];
 
-export const lanes = [
+export const cities = [
   {
-    code: 'ND_HN',
-    name: 'Nam Định - Hà Nội',
-    places: ND_HN,
+    code: 'ND',
+    name: 'Nam Định',
+    places: ND,
   },
   {
-    code: 'HN_ND',
-    name: 'Hà Nội - Nam Định',
-    places: HN_ND,
+    code: 'HN',
+    name: 'Hà Nội',
+    places: HN,
   },
 ];

@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize';
 import sequelize from '../utils/database.js';
 
-const timePlaceLane = sequelize.define('timePlaceLane', {
+const TimePlace = sequelize.define('timePlace', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -19,4 +19,4 @@ const timePlaceLane = sequelize.define('timePlaceLane', {
   // },
 });
 
-export default timePlaceLane;
+export default TimePlace;

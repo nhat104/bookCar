@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize';
 import sequelize from '../utils/database.js';
 
-const PlaceLane = sequelize.define('placeLane', {
+const Place = sequelize.define('place', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -14,10 +14,6 @@ const PlaceLane = sequelize.define('placeLane', {
     allowNull: false,
     unique: true,
   },
-  // laneCode: {
-  //   type: Sequelize.STRING,
-  //   allowNull: false,
-  // },
 });
 
-export default PlaceLane;
+export default Place;

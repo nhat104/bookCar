@@ -2,14 +2,15 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import sequelize from './utils/database.js';
 import authRoutes from './routes/auth.js';
-import Lane from './models/lane.js';
-import PlaceLane from './models/place_lane.js';
-import TimePlaceLane from './models/time_place_lane.js';
+import City from './models/city.js';
+import Place from './models/place.js';
+import TimePlace from './models/time-place.js';
 import Car from './models/car.js';
 import { cars } from './constants/car.js';
-import { lanes } from './constants/timeWithPlace.js';
+import { cities } from './constants/timeWithPlace.js';
 import Driver from './models/driver.js';
 import { drivers } from './constants/driver.js';
+import CarInPlace from './models/car-in-place.js';
 
 const app = express();
 
@@ -23,24 +24,26 @@ app.use((error, _req, res, _next) => {
   res.status(status).json({ message: 'fail', status, data: message });
 });
 
-PlaceLane.belongsTo(Lane, { constraints: true, onDelete: 'CASCADE' });
-Lane.hasMany(PlaceLane);
-TimePlaceLane.belongsTo(PlaceLane, { constraints: true, onDelete: 'CASCADE' });
-PlaceLane.hasMany(TimePlaceLane);
+Place.belongsTo(City, { constraints: true, onDelete: 'CASCADE' });
+City.hasMany(Place);
+TimePlace.belongsTo(Place, { constraints: true, onDelete: 'CASCADE' });
+Place.hasMany(TimePlace);
+Place.belongsToMany(Car, { through: CarInPlace });
+Car.belongsToMany(Place, { through: CarInPlace });
 
 sequelize
   // .sync({ force: true })
   .sync()
   // .then(() => {
-  //   lanes.forEach((item) => {
-  //     Lane.create({
+  //   cities.forEach((item) => {
+  //     City.create({
   //       name: item.name,
-  //       laneCode: item.code,
-  //     }).then((lane) => {
+  //       cityCode: item.code,
+  //     }).then((city) => {
   //       item.places.forEach((place) => {
-  //         lane.createPlaceLane({ name: place.name, placeCode: place.code }).then((placeLane) => {
+  //         city.createPlace({ name: place.name, placeCode: place.code }).then((item) => {
   //           place.time.forEach((time) => {
-  //             placeLane.createTimePlaceLane({ time });
+  //             item.createTimePlace({ time });
   //           });
   //         });
   //       });
@@ -48,7 +51,7 @@ sequelize
   //   });
 
   //   Car.bulkCreate(cars);
-  //   Driver.bulkCreate(drivers)
+  //   Driver.bulkCreate(drivers);
   // })
   .then(() => {
     app.listen(8000);
