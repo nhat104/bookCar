@@ -1,17 +1,21 @@
 import { Sequelize } from 'sequelize';
 import sequelize from '../utils/database.js';
 
-const Car = sequelize.define('car', {
+const CarType = sequelize.define('carType', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
     primaryKey: true,
   },
-  name: {
-    type: Sequelize.STRING,
+  seat: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+  price: {
+    type: Sequelize.INTEGER,
     allowNull: false,
   },
 });
 
-export default Car;
+export default CarType;

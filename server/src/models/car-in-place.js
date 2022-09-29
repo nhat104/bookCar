@@ -1,36 +1,38 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../utils/database.js';
+import Car from './car.js';
 
 const CarInPlace = sequelize.define('carsPlace', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
   carId: {
     type: DataTypes.INTEGER,
     references: {
-      model: 'cars',
+      model: Car,
       key: 'id',
     },
   },
   placeFromId: {
     type: DataTypes.INTEGER,
-    references: {
-      model: 'places',
-      key: 'id',
-    },
   },
   placeToId: {
     type: DataTypes.INTEGER,
-    references: {
-      model: 'places',
-      key: 'id',
-    },
   },
-  date: {
-    type: DataTypes.DATE,
-    allowNull: false,
+  quantity: {
+    type: DataTypes.INTEGER,
   },
-  time: {
-    type: DataTypes.TIME,
-    allowNull: false,
-  },
+  // date: {
+  //   type: DataTypes.DATE,
+  //   allowNull: false,
+  // },
+  // time: {
+  //   type: DataTypes.TIME,
+  //   allowNull: false,
+  // },
 });
 
 export default CarInPlace;
