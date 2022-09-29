@@ -1,48 +1,167 @@
-import { Button, Container, Image, Input, Loading, styled, Text } from '@nextui-org/react';
-import { useState } from 'react';
+import { Input, Loading, styled, Text } from '@nextui-org/react';
+import { Button, Container, Dropdown, Image } from '@nextui-org/react';
+import { useEffect, useState } from 'react';
+import baseApiRequest from '../../api/baseApiRequest';
 import VehicleList from '../../components/VehicleList';
 
 export default function HomePage() {
-  const [location, setLocation] = useState(['Hà Nội', 'Nam Định']);
+  const [cities, setCities] = useState(['Hà Nội', 'Nam Định']);
+  const [fromPlaces, setFromPlaces] = useState([]);
+  const [toPlaces, setToPlaces] = useState([]);
+  const [selectFrom, setSelectFrom] = useState(new Set(['Điểm đi']));
+  const [selectTo, setSelectTo] = useState(new Set(['Điểm đến']));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [vehicles, setVehicles] = useState([]);
 
   const handleChangeLocation = () => {
-    setLocation([location[1], location[0]]);
+    setCities([cities[1], cities[0]]);
+    setSelectFrom(selectTo);
+    setSelectTo(selectFrom);
+    setFromPlaces(toPlaces);
+    setToPlaces(fromPlaces);
   };
-
-  const handleSearchTicket = (e) => {
+  // selectFrom.forEach((item) => console.log(item));
+  // console.log(selectFrom.keys().next().value);
+  const handleSearchVehicle = (e) => {
     e.preventDefault();
+    if (selectFrom === 'Điểm đi' || selectTo === 'Điểm đến') {
+      setError('Vui lòng chọn điểm đi và điểm đến');
+      return;
+    }
+    setError('');
     const data = new FormData(e.target);
     console.log(data.get('date'));
+    setLoading(true);
+
+    const body = {
+      placeFromId: fromPlaces.find(
+        (place) => place.name === selectFrom.keys().next().value
+      ).id,
+      placeToId: toPlaces.find(
+        (place) => place.name === selectTo.keys().next().value
+      ).id,
+    };
+    baseApiRequest.post('/get-car', body).then((res) => {
+      setLoading(false);
+      setVehicles(res.data);
+    });
   };
+
+  useEffect(() => {
+    baseApiRequest
+      .post('/get-place', { city: cities[0] })
+      .then((res) => setFromPlaces(res.data));
+    baseApiRequest
+      .post('/get-place', { city: cities[1] })
+      .then((res) => setToPlaces(res.data));
+  }, []);
 
   return (
     <Wrapper>
       <Image
         showSkeleton
         css={{ position: 'fixed', zIndex: -1 }}
-        src="./board.png"
+        src="./home.png"
         alt="Default Image"
         objectFit="cover"
       />
       <ContainerStyled sm>
-        <Text h1 color="secondary">
+        <Text
+          h1
+          color="warning"
+          css={{
+            transition: 'all 0.3s ease',
+          }}
+        >
           Book Car
         </Text>
-        <InputGroup as="form" onSubmit={handleSearchTicket}>
-          <Input label="ĐIỂM ĐI" size="md" value={location[0]} rounded color="secondary" />
+        <Text as="div" css={{ dflex: 'center', gap: '$10' }}>
+          <Text css={{ fs: '$3xl', w: '125px', color: '#fff' }}>
+            {cities[0]}
+          </Text>
           <Image
             src="./swap.svg"
-            css={{ cursor: 'pointer', mb: '$3' }}
+            css={{ cursor: 'pointer' }}
             onClick={handleChangeLocation}
           />
-          <Input label="ĐIỂM ĐẾN" size="md" value={location[1]} rounded color="secondary" />
-          <Input label="NGÀY" type="date" name="date" rounded color="secondary" />
+          <Text css={{ fs: '$3xl', w: '125px', color: '#fff' }}>
+            {cities[1]}
+          </Text>
+        </Text>
+        <InputGroup as="form" onSubmit={handleSearchVehicle}>
+          <Dropdown>
+            <Dropdown.Button rounded flat color="primary">
+              {selectFrom}
+            </Dropdown.Button>
+            <Dropdown.Menu
+              color="primary"
+              disallowEmptySelection
+              selectionMode="single"
+              selectedKeys={selectFrom}
+              onSelectionChange={setSelectFrom}
+            >
+              {fromPlaces.map((place) => (
+                <Dropdown.Item css={{ w: '500px' }} key={place.name}>
+                  {place.name}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          <Dropdown>
+            <Dropdown.Button rounded flat color="primary">
+              {selectTo}
+            </Dropdown.Button>
+            <Dropdown.Menu
+              color="primary"
+              disallowEmptySelection
+              selectionMode="single"
+              selectedKeys={selectTo}
+              onSelectionChange={setSelectTo}
+            >
+              {toPlaces &&
+                toPlaces.map((place) => (
+                  <Dropdown.Item css={{ w: '500px' }} key={place.name}>
+                    {place.name}
+                  </Dropdown.Item>
+                ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          <Input
+            aria-label="date"
+            type="date"
+            name="date"
+            required
+            rounded
+            color="warning"
+            min={new Date().toISOString().split('T')[0]}
+          />
           <Button rounded type="submit">
             Tìm vé
-            <Loading type="points" css={{ pl: 4 }} color="currentColor" size="sm" />
+            {loading && (
+              <Loading
+                type="points"
+                css={{ pl: 4 }}
+                color="currentColor"
+                size="sm"
+              />
+            )}
           </Button>
         </InputGroup>
-        <VehicleList />
+        {error && (
+          <Input
+            width="214px"
+            readOnly
+            aria-label="error"
+            value={error}
+            status="error"
+          />
+        )}
+        <VehicleList
+          vehicles={vehicles}
+          placeFrom={selectFrom.keys().next().value}
+          placeTo={selectTo.keys().next().value}
+        />
       </ContainerStyled>
     </Wrapper>
   );
@@ -52,6 +171,7 @@ const Wrapper = styled('div', {
   position: 'relative',
   width: '100%',
   backgroundColor: 'unset !important',
+  transition: 'all 0.3s ease',
 });
 
 const ContainerStyled = styled(Container, {
@@ -61,6 +181,7 @@ const ContainerStyled = styled(Container, {
   alignItems: 'center',
   justifyContent: 'center',
   gap: '2rem',
+  transition: 'all 0.3s ease',
 });
 
 const InputGroup = styled('div', {
@@ -68,4 +189,5 @@ const InputGroup = styled('div', {
   gap: '1rem',
   justifyContent: 'center',
   alignItems: 'end',
+  transition: 'all 0.3s ease',
 });

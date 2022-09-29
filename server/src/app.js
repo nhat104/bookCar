@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import sequelize from './utils/database.js';
 import authRoutes from './routes/auth.js';
 import carRoutes from './routes/car-line.js';
+import placeRoutes from './routes/place.js';
 import City from './models/city.js';
 import Place from './models/place.js';
 import Car from './models/car.js';
@@ -16,8 +17,17 @@ const app = express();
 
 app.use(bodyParser.json());
 
+app.use((_, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT, PATCH, DELETE');
+  // res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  next();
+});
+
 app.use('/auth', authRoutes);
 app.use(carRoutes);
+app.use(placeRoutes);
 
 app.use((error, _req, res, _next) => {
   const status = error.statusCode || 500;

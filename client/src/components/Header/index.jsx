@@ -1,6 +1,6 @@
 import { Button, Navbar, Text } from '@nextui-org/react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { AcmeLogo } from './logo';
+import { AcmeLogo } from '../logo';
 
 export default function Header() {
   const { pathname } = useLocation();

@@ -1,15 +1,24 @@
 import { Spacer } from '@nextui-org/react';
+import { useState } from 'react';
 import VehicleInfo from '../VehicleInfo';
 
-export default function VehicleList() {
+export default function VehicleList({ vehicles, placeFrom, placeTo }) {
+  const [chooseVehicle, setChooseVehicle] = useState();
   return (
     <div>
-      {Array.from(new Array(3)).map((_, index) => (
-        <div key={index}>
-          <VehicleInfo />
-          <Spacer />
-        </div>
-      ))}
+      {vehicles &&
+        vehicles.map((vehicle) => (
+          <div key={vehicle.id}>
+            <VehicleInfo
+              vehicle={vehicle}
+              placeFrom={placeFrom}
+              placeTo={placeTo}
+              chooseVehicle={chooseVehicle}
+              setChooseVehicle={setChooseVehicle}
+            />
+            <Spacer />
+          </div>
+        ))}
     </div>
   );
 }
