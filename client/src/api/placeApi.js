@@ -1,10 +1,9 @@
 import baseApiRequest from './baseApiRequest';
 
 const placeApi = {
-  async getByCity(body) {
+  getByCity(body) {
     const url = '/get-place';
-    const res = await baseApiRequest.post(url, body);
-    return res.data;
+    return baseApiRequest.post(url, body);
   },
 };
 

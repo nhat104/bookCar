@@ -1,21 +1,21 @@
 import { Button, Card, Container, Grid, Radio, Text } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useStore } from '../../store';
 
 export default function Payment() {
-  const [paymentMethod, setPaymentMethod] = useState('');
-  const [error, setError] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('1');
+  const [{ placeFrom, placeTo, userInfo, time }] = useStore();
 
-  const handleBuyTicket = () => {
-    if (!paymentMethod) {
-      setError(true);
-    }
+  const handleBuyTicket = () => {};
+
+  if (!userInfo.name) return <Navigate to="/" />;
+
+  // convert yyyy-mm-dd to dd/mm/yyyy
+  const formatDate = (date) => {
+    const datePart = date.split('-');
+    return `${datePart[2]}/${datePart[1]}/${datePart[0]}`;
   };
-
-  useEffect(() => {
-    if (paymentMethod) {
-      setError(false);
-    }
-  }, [paymentMethod]);
 
   return (
     <Container sm css={{ mt: '$10' }}>
@@ -26,20 +26,24 @@ export default function Payment() {
             <Radio.Group
               aria-label="label"
               value={paymentMethod}
-              validationState={error ? 'invalid' : 'valid'}
               onChange={setPaymentMethod}
             >
               {payments.map((payment, index) => (
                 <Card.Body
                   key={index}
-                  css={{ borderBottom: index !== payments.length - 1 && '1px solid $accents5' }}
+                  css={{
+                    borderBottom:
+                      index !== payments.length - 1 && '1px solid $accents5',
+                  }}
                 >
-                  <Radio value={payment.value} description={payment.description}>
+                  <Radio
+                    value={payment.value}
+                    description={payment.description}
+                  >
                     <div
                       style={{
                         marginLeft: '10px',
                         marginRight: '16px',
-                        color: error ? '#f31260' : '#0072f5',
                       }}
                     >
                       <i className={payment.icon}></i>
@@ -50,7 +54,7 @@ export default function Payment() {
               ))}
             </Radio.Group>
           </Card>
-          <Card variant="bordered" css={{ mt: '$12' }}>
+          <Card variant="bordered" css={{ mt: '$20' }}>
             <Card.Body css={{ px: '$8', fd: 'row', jc: 'space-between' }}>
               <Text size="$xl">Tổng tiền</Text>
               <Text size="$xl" color="primary">
@@ -58,7 +62,7 @@ export default function Payment() {
               </Text>
             </Card.Body>
           </Card>
-          <Button css={{ mt: '$8' }} onClick={handleBuyTicket}>
+          <Button css={{ mt: '$11' }} onClick={handleBuyTicket}>
             Thanh toán
           </Button>
         </Grid>
@@ -67,19 +71,23 @@ export default function Payment() {
           <Card variant="bordered" css={{ px: '$4' }}>
             <Card.Body css={{ borderBottom: '1px solid $accents5' }}>
               <Text size="small">Hành khách</Text>
-              <Text css={{ mb: '$4' }}>MMN</Text>
+              <Text css={{ mb: '$4' }}>{userInfo.name}</Text>
               <Text size="small">Số điện thoại</Text>
-              <Text css={{ mb: '$4' }}>0123456789</Text>
-              <Text size="small">Email</Text>
-              <Text>@gmail.com</Text>
+              <Text css={{ mb: '$4' }}>{userInfo.phone}</Text>
+              <Text size="small">Địa chỉ</Text>
+              <Text css={{ mb: '$4' }}>{userInfo.address}</Text>
+              <Text size="small">Căn cước công dân</Text>
+              <Text>{userInfo.cccd}</Text>
             </Card.Body>
             <Card.Body>
               <Text size="small">Điểm đón (dự kiến)</Text>
-              <Text>09:00 - 29/09/2022</Text>
-              <Text css={{ mb: '$4' }}>Cổng chào Nam Định</Text>
+              <Text>
+                {time.hour} - {formatDate(time.date)}
+              </Text>
+              <Text css={{ mb: '$4' }}>{placeFrom}</Text>
               <Text size="small">Điểm trả (dự kiến)</Text>
               <Text>0123456789</Text>
-              <Text>0123456789</Text>
+              <Text>{placeTo}</Text>
             </Card.Body>
           </Card>
         </Grid>

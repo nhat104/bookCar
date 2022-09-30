@@ -1,22 +1,13 @@
-import {
-  Button,
-  Card,
-  Dropdown,
-  Grid,
-  Input,
-  Text,
-  Textarea,
-} from '@nextui-org/react';
+import { Button, Card } from '@nextui-org/react';
+import { Dropdown, Grid, Input, Text, Textarea } from '@nextui-org/react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { actions, useStore } from '../../store';
 
-export default function VehicleInfo({
-  vehicle,
-  placeFrom,
-  placeTo,
-  chooseVehicle,
-  setChooseVehicle,
-}) {
+export default function VehicleInfo({ vehicle }) {
   const [hour, setHour] = useState(new Set([vehicle.times[0]]));
+  const [{ placeFrom, placeTo, chooseVehicle, time }, dispatch] = useStore();
+  const navigate = useNavigate();
 
   const toVND = (price) =>
     Number(price).toLocaleString('it-IT', {
@@ -24,7 +15,22 @@ export default function VehicleInfo({
       currency: 'VND',
     });
 
-  console.log(vehicle);
+  const handleChooseVehicle = () => {
+    dispatch(actions.setVehicle(vehicle));
+  };
+
+  const handleBookCar = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const name = data.get('name');
+    const phone = '0' + data.get('phone');
+    const address = data.get('address');
+    const cccd = data.get('cccd');
+    const note = data.get('note') || '';
+    dispatch(actions.setUser({ name, phone, address, cccd, note }));
+    dispatch(actions.setTime({ ...time, hour: hour.keys().next().value }));
+    navigate('/payment');
+  };
 
   return (
     <Card css={{ p: '$6', mw: '750px' }}>
@@ -32,7 +38,8 @@ export default function VehicleInfo({
         css={{
           pt: '$2',
           flexDirection: 'row',
-          borderBottom: chooseVehicle === vehicle.id && '1px solid $accents5',
+          borderBottom:
+            chooseVehicle.id === vehicle.id && '1px solid $accents5',
         }}
       >
         <img
@@ -95,15 +102,15 @@ export default function VehicleInfo({
             <Button
               auto
               css={{ justifySelf: 'end' }}
-              onClick={() => setChooseVehicle(vehicle.id)}
+              onPress={handleChooseVehicle}
             >
               Chọn tuyến
             </Button>
           </Grid>
         </Grid.Container>
       </Card.Body>
-      {chooseVehicle === vehicle.id && (
-        <>
+      {chooseVehicle.id === vehicle.id && (
+        <form onSubmit={handleBookCar}>
           <Card.Body
             css={{
               fd: 'column',
@@ -113,30 +120,41 @@ export default function VehicleInfo({
             }}
           >
             <Text h4>Nhập thông tin</Text>
-            <Input label="Họ tên" rounded fullWidth name="name" />
+            <Input required label="Họ tên" rounded fullWidth name="name" />
             <Input
               label="Số điện thoại"
               labelLeft="(VN)+84"
               rounded
               name="phone"
               fullWidth
+              required
+              // pattern="^((\+84-?)|0)?[0-9]{9}$"
+              pattern="[0-9]*"
             />
-            <Input label="Địa chỉ" rounded name="address" fullWidth />
-            <Input label="Căn cước công dân" rounded fullWidth name="cccd" />
+            <Input label="Địa chỉ" required rounded name="address" fullWidth />
+            <Input
+              label="Căn cước công dân"
+              required
+              rounded
+              fullWidth
+              name="cccd"
+              pattern="[0-9]*"
+            />
             <Textarea
               label="Ghi chú hoặc yêu cầu khác (Nếu có)"
               placeholder="Các yêu cầu đặc biệt không thể được đảm bảo - nhưng nhà xe sẽ cố gắng hết sức để đáp ứng như cầu của bạn."
               fullWidth
+              name="note"
               maxRows={3}
             />
           </Card.Body>
           <Card.Footer css={{ jc: 'end' }}>
             <Text>Tổng cộng: {toVND(vehicle.price)}</Text>
-            <Button auto css={{ ml: '$6' }}>
+            <Button auto type="submit" css={{ ml: '$6' }}>
               Tiếp tục
             </Button>
           </Card.Footer>
-        </>
+        </form>
       )}
     </Card>
   );

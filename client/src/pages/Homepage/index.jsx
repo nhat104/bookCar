@@ -3,16 +3,19 @@ import { Button, Container, Dropdown, Image } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import baseApiRequest from '../../api/baseApiRequest';
 import VehicleList from '../../components/VehicleList';
+import { actions, useStore } from '../../store';
 
 export default function HomePage() {
   const [cities, setCities] = useState(['Hà Nội', 'Nam Định']);
   const [fromPlaces, setFromPlaces] = useState([]);
   const [toPlaces, setToPlaces] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
   const [selectFrom, setSelectFrom] = useState(new Set(['Điểm đi']));
   const [selectTo, setSelectTo] = useState(new Set(['Điểm đến']));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [vehicles, setVehicles] = useState([]);
+
+  const [{ time }, dispatch] = useStore();
 
   const handleChangeLocation = () => {
     setCities([cities[1], cities[0]]);
@@ -21,8 +24,7 @@ export default function HomePage() {
     setFromPlaces(toPlaces);
     setToPlaces(fromPlaces);
   };
-  // selectFrom.forEach((item) => console.log(item));
-  // console.log(selectFrom.keys().next().value);
+
   const handleSearchVehicle = (e) => {
     e.preventDefault();
     if (selectFrom === 'Điểm đi' || selectTo === 'Điểm đến') {
@@ -31,16 +33,16 @@ export default function HomePage() {
     }
     setError('');
     const data = new FormData(e.target);
-    console.log(data.get('date'));
     setLoading(true);
 
+    const placeFromName = selectFrom.keys().next().value;
+    const placeToName = selectTo.keys().next().value;
+    dispatch(actions.setPlaceFrom(placeFromName));
+    dispatch(actions.setPlaceTo(placeToName));
+    dispatch(actions.setTime({ ...time, date: data.get('date') }));
     const body = {
-      placeFromId: fromPlaces.find(
-        (place) => place.name === selectFrom.keys().next().value
-      ).id,
-      placeToId: toPlaces.find(
-        (place) => place.name === selectTo.keys().next().value
-      ).id,
+      placeFromId: fromPlaces.find((place) => place.name === placeFromName).id,
+      placeToId: toPlaces.find((place) => place.name === placeToName).id,
     };
     baseApiRequest.post('/get-car', body).then((res) => {
       setLoading(false);
@@ -67,13 +69,7 @@ export default function HomePage() {
         objectFit="cover"
       />
       <ContainerStyled sm>
-        <Text
-          h1
-          color="warning"
-          css={{
-            transition: 'all 0.3s ease',
-          }}
-        >
+        <Text h1 color="warning">
           Book Car
         </Text>
         <Text as="div" css={{ dflex: 'center', gap: '$10' }}>
@@ -157,11 +153,7 @@ export default function HomePage() {
             status="error"
           />
         )}
-        <VehicleList
-          vehicles={vehicles}
-          placeFrom={selectFrom.keys().next().value}
-          placeTo={selectTo.keys().next().value}
-        />
+        <VehicleList vehicles={vehicles} />
       </ContainerStyled>
     </Wrapper>
   );
@@ -171,7 +163,6 @@ const Wrapper = styled('div', {
   position: 'relative',
   width: '100%',
   backgroundColor: 'unset !important',
-  transition: 'all 0.3s ease',
 });
 
 const ContainerStyled = styled(Container, {
@@ -181,7 +172,6 @@ const ContainerStyled = styled(Container, {
   alignItems: 'center',
   justifyContent: 'center',
   gap: '2rem',
-  transition: 'all 0.3s ease',
 });
 
 const InputGroup = styled('div', {
@@ -189,5 +179,4 @@ const InputGroup = styled('div', {
   gap: '1rem',
   justifyContent: 'center',
   alignItems: 'end',
-  transition: 'all 0.3s ease',
 });

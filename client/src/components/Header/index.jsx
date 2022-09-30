@@ -7,7 +7,7 @@ export default function Header() {
 
   return (
     <Navbar variant="sticky">
-      <Link>
+      <Link to="/">
         <Navbar.Brand>
           <AcmeLogo />
           <Text b color="inherit" hideIn="xs">
@@ -15,9 +15,17 @@ export default function Header() {
           </Text>
         </Navbar.Brand>
       </Link>
-      <Navbar.Content activeColor="primary" hideIn="xs" variant="underline-rounded">
+      <Navbar.Content
+        activeColor="primary"
+        hideIn="xs"
+        variant="underline-rounded"
+      >
         {navBars.map((navBar) => (
-          <Navbar.Link as="div" key={navBar.name} isActive={pathname === navBar.path}>
+          <Navbar.Link
+            as="div"
+            key={navBar.name}
+            isActive={pathname === navBar.path}
+          >
             <NavLink to={navBar.path}>{navBar.name}</NavLink>
           </Navbar.Link>
         ))}
@@ -42,9 +50,5 @@ const navBars = [
   {
     name: 'Order Management',
     path: '/ticket-info',
-  },
-  {
-    name: 'Payment',
-    path: '/payment',
   },
 ];
