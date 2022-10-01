@@ -1,17 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import sequelize from './utils/database.js';
-import authRoutes from './routes/auth.js';
-import carRoutes from './routes/car-line.js';
-import placeRoutes from './routes/place.js';
-import City from './models/city.js';
-import Place from './models/place.js';
-import Car from './models/car.js';
-import TimePlace from './models/time-place.js';
-import CarType from './models/car-type.js';
+import { authRoutes, placeRoutes, carRoutes, ticketRoutes } from './routes/index.js';
+import { Driver } from './models/index.js';
+import { City, Place, Car, TimePlace, CarType, CarInPlace, Guess, Ticket } from './models/index.js';
 import { cars, carTypes, cities, drivers } from './constants/index.js';
-import Driver from './models/driver.js';
-import CarInPlace from './models/car-in-place.js';
 
 const app = express();
 
@@ -28,6 +21,7 @@ app.use((_, res, next) => {
 app.use('/auth', authRoutes);
 app.use(carRoutes);
 app.use(placeRoutes);
+app.use(ticketRoutes);
 
 app.use((error, _req, res, _next) => {
   const status = error.statusCode || 500;
@@ -45,6 +39,8 @@ CarType.hasMany(Car, { foreignKey: 'carTypeId' });
 Car.belongsTo(CarType);
 CarInPlace.belongsTo(Place, { as: 'placeFrom', foreignKey: 'placeFromId' });
 CarInPlace.belongsTo(Place, { as: 'placeTo', foreignKey: 'placeToId' });
+Guess.belongsToMany(CarInPlace, { through: Ticket });
+CarInPlace.belongsToMany(Guess, { through: Ticket });
 
 // Place.belongsToMany(Place, {
 //   through: CarInPlace,
@@ -58,7 +54,7 @@ CarInPlace.belongsTo(Place, { as: 'placeTo', foreignKey: 'placeToId' });
 // });
 
 sequelize
-  // .sync({ force: true })
+  // .sync({ force: true }) // reset all database
   .sync()
   // .then(async () => {
   //   Driver.bulkCreate(drivers);

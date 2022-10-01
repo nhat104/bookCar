@@ -1,16 +1,44 @@
+import { Op } from 'sequelize';
 import CarInPlace from '../models/car-in-place.js';
 import CarType from '../models/car-type.js';
 import Car from '../models/car.js';
+import Ticket from '../models/ticket.js';
 import TimePlace from '../models/time-place.js';
 
 export const getCarLine = async (req, res, next) => {
-  const { placeFromId, placeToId } = req.body;
+  const { placeFromId, placeToId, date } = req.body;
   try {
-    const carInfo = await CarInPlace.findAll({
+    let carInfo = await CarInPlace.findAll({
       where: { placeFromId, placeToId },
       include: [{ model: Car, include: [{ model: CarType }] }],
     });
-    const times = await TimePlace.findAll({ where: { placeId: placeFromId } });
+    let times = await TimePlace.findAll({ where: { placeId: placeFromId } });
+
+    carInfo = await Promise.all(
+      carInfo.map(async (carsPlace) => {
+        times = await Promise.all(
+          // Tính số ghế còn trống của mỗi chuyến theo thời gian.
+          times.map(async (time) => {
+            const timePart = time.time.split('h');
+            const dateTime = `${date} ${timePart[0]}:${timePart[1]}:00`;
+            const getTickets = await Ticket.findAndCountAll({
+              where: {
+                date: dateTime,
+                carsPlaceId: carsPlace.id,
+              },
+            });
+            return {
+              ...time.toJSON(),
+              emptySeat: carsPlace.car.carType.seat - getTickets.count,
+            };
+          })
+        );
+        return {
+          ...carsPlace.toJSON(),
+          times: times.map((time) => ({ time: time.time, emptySeat: time.emptySeat })),
+        };
+      })
+    );
 
     res.status(200).json({
       message: 'success',
@@ -19,9 +47,12 @@ export const getCarLine = async (req, res, next) => {
         id: item.id,
         carId: item.carId,
         name: item.car.name,
+        emptySeat: item.emptySeat,
+        desc: item.desc,
         seat: item.car.carType.seat,
+        emptySeats: carInfo.emptySeats,
         price: item.car.carType.price,
-        times: times.map((time) => time.time),
+        times: item.times,
       })),
     });
   } catch (error) {

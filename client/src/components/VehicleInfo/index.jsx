@@ -1,14 +1,15 @@
 import { Button, Card } from '@nextui-org/react';
 import { Dropdown, Grid, Input, Text, Textarea } from '@nextui-org/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { actions, useStore } from '../../store';
 
 export default function VehicleInfo({ vehicle }) {
-  const [hour, setHour] = useState(new Set([vehicle.times[0]]));
+  const [hour, setHour] = useState(new Set([vehicle.times[0].time]));
   const [{ placeFrom, placeTo, chooseVehicle, time }, dispatch] = useStore();
-  const navigate = useNavigate();
+  const [emptySeat, setEmptySeat] = useState(0);
 
+  const navigate = useNavigate();
   const toVND = (price) =>
     Number(price).toLocaleString('it-IT', {
       style: 'currency',
@@ -31,6 +32,14 @@ export default function VehicleInfo({ vehicle }) {
     dispatch(actions.setTime({ ...time, hour: hour.keys().next().value }));
     navigate('/payment');
   };
+
+  useEffect(() => {
+    const time = hour.keys().next().value;
+    const seat = vehicle.times.find(
+      (timeItem) => timeItem.time === time
+    ).emptySeat;
+    setEmptySeat(seat);
+  }, [hour]);
 
   return (
     <Card css={{ p: '$6', mw: '750px' }}>
@@ -69,8 +78,11 @@ export default function VehicleInfo({ vehicle }) {
               </Text>
             </Grid>
           </Grid>
-          <Grid xs={12}>
-            <Text>Giường nằm 46 chỗ</Text>
+          <Grid xs={12} css={{ jc: 'space-between' }}>
+            <Text>
+              {vehicle.desc || 'Giường nằm'} {vehicle.seat} chỗ
+            </Text>
+            <Text>Còn {emptySeat} chỗ trống</Text>
           </Grid>
           <Grid
             xs={12}
@@ -88,8 +100,8 @@ export default function VehicleInfo({ vehicle }) {
                 onSelectionChange={setHour}
               >
                 {vehicle.times.map((time) => (
-                  <Dropdown.Item css={{ w: '500px' }} key={time}>
-                    {time}
+                  <Dropdown.Item css={{ w: '500px' }} key={time.time}>
+                    {time.time}
                   </Dropdown.Item>
                 ))}
               </Dropdown.Menu>

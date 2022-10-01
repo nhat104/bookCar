@@ -2,7 +2,7 @@ const ND = [
   {
     code: 'HH',
     name: 'Cổng chào Hải Hậu',
-    time: ['4h', '6h', '9h', '12h', '15h', '18h', '21h'],
+    time: ['4h00', '6h00', '9h00', '12h00', '15h00', '18h00', '21h00'],
   },
   {
     code: 'XT',
@@ -25,22 +25,22 @@ const HN = [
   {
     code: 'GL',
     name: 'Gia Lâm',
-    time: ['9h', '15h'],
+    time: ['9h00', '15h00'],
   },
   {
     code: 'YN',
     name: 'Yên Nghĩa',
-    time: ['9h', '14h', '17h'],
+    time: ['9h00', '14h00', '17h00'],
   },
   {
     code: 'MD',
     name: 'Mỹ Đình',
-    time: ['6h', '9h', '13h', '17h', '20h'],
+    time: ['6h00', '9h00', '13h00', '17h00', '20h00'],
   },
   {
     code: 'GB',
     name: 'Giáp Bát',
-    time: ['6h', '9h', '12h', '15h', '17h', '21h'],
+    time: ['6h00', '9h00', '12h00', '15h00', '17h00', '21h00'],
   },
   {
     code: 'NN',

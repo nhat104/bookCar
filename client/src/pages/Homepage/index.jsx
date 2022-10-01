@@ -43,6 +43,7 @@ export default function HomePage() {
     const body = {
       placeFromId: fromPlaces.find((place) => place.name === placeFromName).id,
       placeToId: toPlaces.find((place) => place.name === placeToName).id,
+      date: data.get('date'),
     };
     baseApiRequest.post('/get-car', body).then((res) => {
       setLoading(false);

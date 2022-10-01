@@ -15,15 +15,6 @@ router.post(
         return Promise.reject('Username already exists!');
       }
     }),
-    body('email')
-      .isEmail()
-      .withMessage('Please enter a valid email.')
-      .custom(async (value) => {
-        const userDoc = await User.findOne({ where: { email: value } });
-        if (userDoc) {
-          return Promise.reject('Email address already exists!');
-        }
-      }),
     body('password')
       .trim()
       .isLength({ min: 6 })

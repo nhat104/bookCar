@@ -26,8 +26,24 @@ export const carTypes = [
 ];
 
 export const cars = [
-  [{ name: 'Car 1' }, { name: 'Car 2' }, { name: 'Car 3' }],
-  [{ name: 'Car 4' }, { name: 'Car 5' }, { name: 'Car 6' }],
-  [{ name: 'Car 7' }, { name: 'Car 8' }, { name: 'Car 9' }],
-  [{ name: 'Car 10' }, { name: 'Car 11' }, { name: 'Car 12' }],
+  [
+    { name: 'Car 1', desc: 'Giường nằm' },
+    { name: 'Car 2', desc: 'Limousine giường phòng' },
+    { name: 'Car 3', desc: 'Limousine giường VIP' },
+  ],
+  [
+    { name: 'Car 4', desc: 'Limousine giường phòng' },
+    { name: 'Car 5', desc: 'Giường nằm' },
+    { name: 'Car 6', desc: 'Limousine giường VIP' },
+  ],
+  [
+    { name: 'Car 7', desc: 'Limousine giường VIP' },
+    { name: 'Car 8', desc: 'Giường nằm' },
+    { name: 'Car 9', desc: 'Limousine giường VIP' },
+  ],
+  [
+    { name: 'Car 10', desc: 'Limousine giường phòng' },
+    { name: 'Car 11', desc: 'Giường nằm' },
+    { name: 'Car 12', desc: 'Limousine giường VIP' },
+  ],
 ];

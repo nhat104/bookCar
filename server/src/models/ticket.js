@@ -1,32 +1,25 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../utils/database.js';
 
-const User = sequelize.define('user', {
+const Ticket = sequelize.define('ticket', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     allowNull: false,
     primaryKey: true,
   },
-  name: {
+  date: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  payment: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  address: DataTypes.STRING,
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  cccd: DataTypes.STRING,
-  role: {
-    type: DataTypes.STRING,
+  driverId: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
 });
 
-export default User;
+export default Ticket;
