@@ -12,10 +12,15 @@ export const buyTicket = async (req, res, next) => {
     const ticket = await carLine.addGuess(guess, {
       through: { payment, date, driverId: driver.id },
     });
+    console.log(ticket[0].toJSON());
     res.status(200).json({
       message: 'success',
       status: 200,
-      data: ticket,
+      data: {
+        payment: ticket[0].payment,
+        date: ticket[0].date,
+        driver: driver.toJSON(),
+      },
     });
   } catch (error) {
     next(error);

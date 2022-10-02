@@ -44,11 +44,11 @@ export default function Header() {
 
 const navBars = [
   {
-    name: 'Home',
+    name: 'Trang chủ',
     path: '/',
   },
   {
-    name: 'Order Management',
+    name: 'Quản lý đơn hàng',
     path: '/ticket-info',
   },
 ];

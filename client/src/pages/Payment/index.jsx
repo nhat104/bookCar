@@ -1,20 +1,52 @@
-import { Button, Card, Container, Grid, Radio, Text } from '@nextui-org/react';
+import { Button, Checkbox, Input, Modal, Row } from '@nextui-org/react';
+import { Card, Container, Grid, Loading, Radio, Text } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import baseApiRequest from '../../api/baseApiRequest';
 import { useStore } from '../../store';
 
 export default function Payment() {
-  const [paymentMethod, setPaymentMethod] = useState('1');
-  const [{ placeFrom, placeTo, userInfo, time }] = useStore();
-
-  const handleBuyTicket = () => {};
+  const [paymentMethod, setPaymentMethod] = useState('Visa Card');
+  const [loading, setLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [ticket, setTicket] = useState({});
+  const [{ placeFrom, placeTo, userInfo, time, chooseVehicle }] = useStore();
+  const navigate = useNavigate();
 
   if (!userInfo.name) return <Navigate to="/" />;
+
+  const handleBuyTicket = () => {
+    const body = {
+      carLineId: chooseVehicle.id,
+      payment: paymentMethod,
+      time,
+      userInfo,
+    };
+    baseApiRequest.post('/buy-ticket', body).then((res) => {
+      setLoading(false);
+      setTicket(res.data);
+      if (res.status === 200) {
+        setOpenModal(true);
+      }
+    });
+  };
 
   // convert yyyy-mm-dd to dd/mm/yyyy
   const formatDate = (date) => {
     const datePart = date.split('-');
     return `${datePart[2]}/${datePart[1]}/${datePart[0]}`;
+  };
+
+  const closeHandler = () => {
+    setOpenModal(false);
+  };
+
+  const handleGoHome = () => {
+    navigate('/');
+  };
+
+  const handleGoOrders = () => {
+    navigate('/ticket-info');
   };
 
   return (
@@ -54,7 +86,7 @@ export default function Payment() {
               ))}
             </Radio.Group>
           </Card>
-          <Card variant="bordered" css={{ mt: '$20' }}>
+          <Card variant="bordered" css={{ mt: '$18' }}>
             <Card.Body css={{ px: '$8', fd: 'row', jc: 'space-between' }}>
               <Text size="$xl">Tổng tiền</Text>
               <Text size="$xl" color="primary">
@@ -62,8 +94,16 @@ export default function Payment() {
               </Text>
             </Card.Body>
           </Card>
-          <Button css={{ mt: '$11' }} onClick={handleBuyTicket}>
+          <Button css={{ mt: '$8' }} onPress={handleBuyTicket}>
             Thanh toán
+            {loading && (
+              <Loading
+                type="points"
+                css={{ pl: 4 }}
+                color="currentColor"
+                size="sm"
+              />
+            )}
           </Button>
         </Grid>
         <Grid xs={4} css={{ fd: 'column', gap: '$6' }}>
@@ -86,12 +126,36 @@ export default function Payment() {
               </Text>
               <Text css={{ mb: '$4' }}>{placeFrom}</Text>
               <Text size="small">Điểm trả (dự kiến)</Text>
-              <Text>0123456789</Text>
               <Text>{placeTo}</Text>
             </Card.Body>
           </Card>
         </Grid>
       </Grid.Container>
+      {ticket.driver && (
+        <Modal
+          aria-labelledby="modal-title"
+          open={openModal}
+          onClose={closeHandler}
+        >
+          <Modal.Header>
+            <Text size={18}>Đặt xe thành công</Text>
+          </Modal.Header>
+          <Modal.Body>
+            <Text>Thông tin tài xế của bạn</Text>
+            <Text>Họ tên: {ticket.driver.name}</Text>
+            <Text>Ngày sinh: {ticket.driver.dateOfBirth}</Text>
+            <Text>Số điện thoại: {ticket.driver.phone}</Text>
+          </Modal.Body>
+          <Modal.Footer css={{ jc: 'space-between' }}>
+            <Button auto flat onPress={handleGoHome}>
+              Về trang chủ
+            </Button>
+            <Button auto onPress={handleGoOrders}>
+              Quản lý đơn hàng
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </Container>
   );
 }
@@ -99,13 +163,13 @@ export default function Payment() {
 const payments = [
   {
     name: 'Thẻ thanh toán quốc tế',
-    value: '1',
+    value: 'Visa Card',
     description: 'Thẻ Visa, MasterCard, JCB',
     icon: 'fa-regular fa-credit-card',
   },
   {
     name: 'Thanh toán khi lên xe',
-    value: '2',
+    value: 'Cash',
     description: 'Bạn có thể thanh toán cho tài xế khi lên xe',
     icon: 'fa-solid fa-bus-simple',
   },
