@@ -1,10 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import sequelize from './utils/database.js';
-import { authRoutes, placeRoutes, carRoutes, ticketRoutes } from './routes/index.js';
-import { Driver } from './models/index.js';
+import { authRoutes, placeRoutes, carRoutes, ticketRoutes, reportRoutes } from './routes/index.js';
+import { Driver, User } from './models/index.js';
 import { City, Place, Car, TimePlace, CarType, CarInPlace, Guess, Ticket } from './models/index.js';
-import { cars, carTypes, cities, drivers } from './constants/index.js';
+import { cars, carTypes, cities, drivers, guesses } from './constants/index.js';
 
 const app = express();
 
@@ -22,6 +22,7 @@ app.use('/auth', authRoutes);
 app.use(carRoutes);
 app.use(placeRoutes);
 app.use(ticketRoutes);
+app.use('/report', reportRoutes);
 
 app.use((error, _req, res, _next) => {
   const status = error.statusCode || 500;
@@ -39,8 +40,14 @@ CarType.hasMany(Car, { foreignKey: 'carTypeId' });
 Car.belongsTo(CarType);
 CarInPlace.belongsTo(Place, { as: 'placeFrom', foreignKey: 'placeFromId' });
 CarInPlace.belongsTo(Place, { as: 'placeTo', foreignKey: 'placeToId' });
-Guess.belongsToMany(CarInPlace, { through: Ticket });
-CarInPlace.belongsToMany(Guess, { through: Ticket });
+// Guess.belongsToMany(CarInPlace, { through: Ticket });
+// CarInPlace.belongsToMany(Guess, { through: Ticket });
+Ticket.belongsTo(Guess);
+Guess.hasMany(Ticket);
+Ticket.belongsTo(CarInPlace);
+CarInPlace.hasMany(Ticket);
+Ticket.belongsTo(Driver);
+Driver.hasMany(Ticket);
 
 // Place.belongsToMany(Place, {
 //   through: CarInPlace,
@@ -73,6 +80,12 @@ sequelize
   //       });
   //     });
   //   });
+  //   User.create({
+  //     name: 'Đỗ Uyên',
+  //     username: 'admin',
+  //     password: '123456',
+  //     role: 'admin',
+  //   });
   // })
   // .then(async () => {
   //   const allCity = await City.findAll();
@@ -92,6 +105,29 @@ sequelize
   //         quantity: 1,
   //         carId: Math.floor(Math.random() * 12) + 1,
   //       });
+  //     });
+  //   });
+  // })
+  // .then(async () => {
+  //   guesses.forEach(async (guessItem) => {
+  //     const guess = await Guess.create(guessItem.info);
+  //     guessItem.tickets.forEach(async (ticketItem) => {
+  //       const carLine = await CarInPlace.findOne({
+  //         order: sequelize.random(),
+  //       });
+  //       const driver = await Driver.findOne({
+  //         order: sequelize.random(),
+  //       });
+  //       const timePart = ticketItem.date.split(' ');
+  //       Ticket.create({
+  //         payment: ticketItem.payment,
+  //         date: timePart[0],
+  //         hour: timePart[1],
+  //         guessId: guess.id,
+  //         carsPlaceId: carLine.id,
+  //         driverId: driver.id,
+  //       });
+  //       // await carInPlace.update({ quantity: carInPlace.quantity - 1 });
   //     });
   //   });
   // })

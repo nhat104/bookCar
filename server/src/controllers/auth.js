@@ -15,9 +15,9 @@ export const signup = (req, res, next) => {
     console.log(errors.array());
     throw error;
   }
-  const { name, username, email, password, role = 'user' } = req.body;
+  const { name, username, password, role = 'user' } = req.body;
 
-  return User.create({ name, username, email, password, role })
+  return User.create({ name, username, password, role })
     .then((user) => {
       res.status(201).json({ message: 'User created!', userId: user.id });
     })
@@ -27,22 +27,6 @@ export const signup = (req, res, next) => {
       }
       next(err);
     });
-
-  // return user
-  //   .save()
-  //   .then((result) => {
-  //     res.status(201).json({
-  //       message: 'successful',
-  //       status: 201,
-  //       data: { message: 'User created!', userId: result._id },
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     if (!err.statusCode) {
-  //       err.statusCode = 500;
-  //     }
-  //     next(err);
-  //   });
 };
 
 export const login = (req, res, next) => {

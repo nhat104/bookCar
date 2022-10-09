@@ -4,12 +4,16 @@ import sequelize from '../utils/database.js';
 const Ticket = sequelize.define('ticket', {
   id: {
     type: DataTypes.INTEGER,
+    primaryKey: true,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true,
   },
   date: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+  hour: {
+    type: DataTypes.TIME,
     allowNull: false,
   },
   payment: {

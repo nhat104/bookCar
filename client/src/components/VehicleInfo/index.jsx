@@ -3,6 +3,7 @@ import { Dropdown, Grid, Input, Text, Textarea } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { actions, useStore } from '../../store';
+import { toVND } from '../../utils';
 
 export default function VehicleInfo({ vehicle }) {
   const [hour, setHour] = useState(new Set([vehicle.times[0].time]));
@@ -10,11 +11,6 @@ export default function VehicleInfo({ vehicle }) {
   const [emptySeat, setEmptySeat] = useState(0);
 
   const navigate = useNavigate();
-  const toVND = (price) =>
-    Number(price).toLocaleString('it-IT', {
-      style: 'currency',
-      currency: 'VND',
-    });
 
   const handleChooseVehicle = () => {
     dispatch(actions.setVehicle(vehicle));
@@ -46,13 +42,12 @@ export default function VehicleInfo({ vehicle }) {
       <Card.Body
         css={{
           pt: '$2',
-          flexDirection: 'row',
+          fd: 'row',
           borderBottom:
             chooseVehicle.id === vehicle.id && '1px solid $accents5',
         }}
       >
         <img
-          alt="nextui logo"
           style={{ objectFit: 'cover' }}
           src="./car1.png"
           width="150px"
@@ -84,10 +79,7 @@ export default function VehicleInfo({ vehicle }) {
             </Text>
             <Text>Còn {emptySeat} chỗ trống</Text>
           </Grid>
-          <Grid
-            xs={12}
-            css={{ alignItems: 'center', justifyContent: 'space-between' }}
-          >
+          <Grid xs={12} css={{ ai: 'center', jc: 'space-between' }}>
             <Dropdown>
               <Dropdown.Button rounded flat color="primary">
                 {hour}

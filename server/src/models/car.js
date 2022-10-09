@@ -12,6 +12,11 @@ const Car = sequelize.define('car', {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  licensePlate: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
+  },
 });
 
 export default Car;

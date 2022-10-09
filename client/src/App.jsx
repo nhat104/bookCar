@@ -1,16 +1,38 @@
-import { Route, Routes } from 'react-router-dom';
-import HomePage from './pages/HomePage';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
+import { ClientLayout, AdminLayout } from './layout';
+import HomePage from './pages/HomePage';
+import OrderManagement from './pages/OrderManagement';
 import Payment from './pages/Payment';
+import TimeReport from './pages/TimeReport';
 import { Provider } from './store';
+
+const AuthRoute = ({ type = 'private', children }) => {
+  const user = localStorage.getItem('user');
+  const layout = type === 'public' ? <ClientLayout /> : <AdminLayout />;
+  if (type === 'private' && (!user || !JSON.parse(user).role)) {
+    return <Navigate to="/" />;
+  }
+  return (
+    <>
+      {layout}
+      {children}
+    </>
+  );
+};
 
 function App() {
   return (
     <Provider>
-      <Header />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/payment" element={<Payment />} />
+        <Route path="/" element={<AuthRoute type="public" />}>
+          <Route path="" element={<HomePage />} />
+          <Route path="payment" element={<Payment />} />
+          <Route path="ticket-info" element={<OrderManagement />} />
+        </Route>
+        <Route path="/admin" element={<AuthRoute type="private" />}>
+          <Route path="" element={<TimeReport />} />
+        </Route>
       </Routes>
     </Provider>
   );
