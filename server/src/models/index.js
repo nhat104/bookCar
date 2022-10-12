@@ -1,3 +1,4 @@
+// Xây dựng các bảng trong database
 export { default as User } from './user.js';
 export { default as City } from './city.js';
 export { default as Driver } from './driver.js';

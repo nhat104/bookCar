@@ -1,13 +1,14 @@
-import { Op, Sequelize } from 'sequelize';
+import { col, fn, literal, Op } from 'sequelize';
 import { Car, CarInPlace, CarType, Driver, Guess, Place, Ticket } from '../models/index.js';
 
+// Xử lý logic đặt vé
 export const buyTicket = async (req, res, next) => {
   const { carLineId, payment, time, userInfo } = req.body;
   const hourPart = time.hour.split('h');
   try {
     const guess = await Guess.create(userInfo);
     const carLine = await CarInPlace.findOne({ where: { id: carLineId } });
-    const driver = await Driver.findOne({ order: Sequelize.literal('rand()') });
+    const driver = await Driver.findOne({ order: literal('rand()') });
     const ticket = await Ticket.create({
       date: time.date,
       hour: `${hourPart[0]}:${hourPart[1]}:00`,
@@ -30,17 +31,24 @@ export const buyTicket = async (req, res, next) => {
   }
 };
 
+// Tạo data báo cáo theo ngày
 export const reportByDate = async (req, res, next) => {
   // ngày, số vé bán được, doanh thu
+  const { dateStart, dateEnd } = req.body;
   try {
     const tickets = await Ticket.findAll({
       attributes: [
         'id',
         'date',
-        [Sequelize.fn('count', Sequelize.col('ticket.id')), 'count'],
-        [Sequelize.fn('sum', Sequelize.col('carsPlace.car.carType.price')), 'sum_price'],
+        [fn('count', col('ticket.id')), 'count'],
+        [fn('sum', col('carsPlace.car.carType.price')), 'sum_price'],
       ],
-      // where: true && { date: { [Op.gte]: '2022-10-10' } },
+      where: {
+        date: {
+          [Op.gte]: dateStart || '2000-01-01',
+          [Op.lte]: dateEnd || '3000-01-01',
+        },
+      },
       include: [
         {
           model: CarInPlace,
@@ -81,14 +89,20 @@ export const reportByDate = async (req, res, next) => {
 };
 
 export const reportByMonth = async (req, res, next) => {
+  const { dateStart, dateEnd } = req.body;
   try {
     const tickets = await Ticket.findAll({
       attributes: [
-        [Sequelize.fn('date_format', Sequelize.col('date'), '%Y-%m'), 'month'],
-        [Sequelize.fn('count', Sequelize.col('ticket.id')), 'count'],
-        [Sequelize.fn('sum', Sequelize.col('carsPlace.car.carType.price')), 'sum_price'],
+        [fn('date_format', col('date'), '%Y-%m'), 'month'],
+        [fn('count', col('ticket.id')), 'count'],
+        [fn('sum', col('carsPlace.car.carType.price')), 'sum_price'],
       ],
-      // where: true && { date: { [Op.gte]: '2022-10-10' } },
+      where: {
+        date: {
+          [Op.gte]: dateStart || '2000-01-01',
+          [Op.lte]: dateEnd || '3000-01-01',
+        },
+      },
       include: [
         {
           model: CarInPlace,
@@ -128,14 +142,20 @@ export const reportByMonth = async (req, res, next) => {
 };
 
 export const reportByYear = async (req, res, next) => {
+  const { dateStart, dateEnd } = req.body;
   try {
     const tickets = await Ticket.findAll({
       attributes: [
-        [Sequelize.fn('date_format', Sequelize.col('date'), '%Y'), 'year'],
-        [Sequelize.fn('count', Sequelize.col('ticket.id')), 'count'],
-        [Sequelize.fn('sum', Sequelize.col('carsPlace.car.carType.price')), 'sum_price'],
+        [fn('date_format', col('date'), '%Y'), 'year'],
+        [fn('count', col('ticket.id')), 'count'],
+        [fn('sum', col('carsPlace.car.carType.price')), 'sum_price'],
       ],
-      // where: true && { date: { [Op.gte]: '2022-10-10' } },
+      where: {
+        date: {
+          [Op.gte]: dateStart || '2000-01-01',
+          [Op.lte]: dateEnd || '3000-01-01',
+        },
+      },
       include: [
         {
           model: CarInPlace,
@@ -175,14 +195,20 @@ export const reportByYear = async (req, res, next) => {
 };
 
 export const reportByDriver = async (req, res, next) => {
+  const { dateStart, dateEnd } = req.body;
   try {
     const tickets = await Ticket.findAll({
       attributes: [
         'driverId',
-        [Sequelize.fn('count', Sequelize.col('ticket.id')), 'count'],
-        [Sequelize.fn('sum', Sequelize.col('carsPlace.car.carType.price')), 'sum_price'],
+        [fn('count', col('ticket.id')), 'count'],
+        [fn('sum', col('carsPlace.car.carType.price')), 'sum_price'],
       ],
-      // where: true && { date: { [Op.gte]: '2022-10-10' } },
+      where: {
+        date: {
+          [Op.gte]: dateStart || '2000-01-01',
+          [Op.lte]: dateEnd || '3000-01-01',
+        },
+      },
       include: [
         {
           model: CarInPlace,
@@ -195,10 +221,7 @@ export const reportByDriver = async (req, res, next) => {
             },
           ],
         },
-        {
-          model: Driver,
-          attributes: ['name'],
-        },
+        { model: Driver, attributes: ['name'] },
       ],
       group: ['driverId'],
     });
@@ -206,8 +229,14 @@ export const reportByDriver = async (req, res, next) => {
       message: 'success',
       status: 200,
       data: {
-        columns: ['Tài xế', 'Số chuyến đã đi', 'Tổng thu nhập'],
-        rows: tickets.map((ticket) => ({
+        columns: [
+          { id: 'stt', label: 'STT' },
+          { id: 'driver', label: 'Tài xế' },
+          { id: 'count', label: 'Số chuyến đã đi' },
+          { id: 'sum_price', label: 'Tổng thu nhập (VND)' },
+        ],
+        rows: tickets.map((ticket, index) => ({
+          stt: `${index + 1}`,
           driver: ticket.toJSON().driver.name,
           count: ticket.toJSON().count,
           sum_price: ticket.toJSON().sum_price,
@@ -220,42 +249,82 @@ export const reportByDriver = async (req, res, next) => {
 };
 
 export const reportByPlace = async (req, res, next) => {
+  const { dateStart, dateEnd } = req.body;
   try {
     const tickets = await Ticket.findAll({
       attributes: [
-        'placeId',
-        [Sequelize.fn('count', Sequelize.col('ticket.id')), 'count'],
-        [Sequelize.fn('sum', Sequelize.col('carsPlace.car.carType.price')), 'sum_price'],
+        'carsPlace.placeFromId',
+        [fn('count', col('ticket.id')), 'count'],
+        [fn('sum', col('carsPlace.car.carType.price')), 'sum_price'],
       ],
-      // where: true && { date: { [Op.gte]: '2022-10-10' } },
+      where: {
+        date: {
+          [Op.gte]: dateStart || '2000-01-01',
+          [Op.lte]: dateEnd || '3000-01-01',
+        },
+      },
       include: [
         {
           model: CarInPlace,
-          attributes: ['id'],
+          attributes: ['placeFromId'],
           include: [
             {
               model: Car,
               attributes: ['id'],
               include: [{ model: CarType, attributes: ['price'] }],
             },
+            {
+              model: Place,
+              attributes: ['name'],
+              as: 'placeFrom',
+            },
           ],
         },
-        {
-          model: Place,
-          attributes: ['name'],
-        },
       ],
-      group: ['placeId'],
+      group: ['carsPlace.placeFromId'],
     });
     res.status(200).json({
       message: 'success',
       status: 200,
       data: {
-        columns: ['Điểm đón', 'Số chuyến đã đi', 'Tổng thu nhập'],
-        rows: tickets.map((ticket) => ({
-          place: ticket.toJSON().place.name,
+        columns: [
+          { id: 'stt', label: 'STT' },
+          { id: 'place', label: 'Điểm đi' },
+          { id: 'count', label: 'Số chuyến đi' },
+          { id: 'sum_price', label: 'Tổng thu nhập (VND)' },
+        ],
+        rows: tickets.map((ticket, index) => ({
+          stt: `${index + 1}`,
+          place: ticket.toJSON().carsPlace.placeFrom.name,
           count: ticket.toJSON().count,
           sum_price: ticket.toJSON().sum_price,
+        })),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const reportByDriverRate = async (req, res, next) => {
+  try {
+    const drivers = await Driver.findAll({
+      attributes: ['id', 'name', 'rate'],
+      order: [['rate', 'DESC']],
+    });
+    res.status(200).json({
+      message: 'success',
+      status: 200,
+      data: {
+        columns: [
+          { id: 'stt', label: 'STT' },
+          { id: 'driver', label: 'Tài xế' },
+          { id: 'rate', label: 'Đánh giá' },
+        ],
+        rows: drivers.map((driver, index) => ({
+          stt: `${index + 1}`,
+          driver: driver.toJSON().name,
+          rate: driver.toJSON().rate,
         })),
       },
     });

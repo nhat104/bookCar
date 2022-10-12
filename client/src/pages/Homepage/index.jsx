@@ -25,6 +25,7 @@ export default function HomePage() {
     setToPlaces(fromPlaces);
   };
 
+  // Tìm các tuyến xe theo yêu cầu người dùng
   const handleSearchVehicle = (e) => {
     e.preventDefault();
     if (selectFrom === 'Điểm đi' || selectTo === 'Điểm đến') {
@@ -51,6 +52,7 @@ export default function HomePage() {
     });
   };
 
+  // Lấy dữ liệu điểm đi, điểm đến từ server
   useEffect(() => {
     baseApiRequest
       .post('/get-place', { city: cities[0] })
@@ -61,6 +63,7 @@ export default function HomePage() {
   }, []);
 
   return (
+    // Giao diện cho màn hình Trang chủ
     <Wrapper>
       <Image
         showSkeleton

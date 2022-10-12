@@ -12,10 +12,13 @@ export default function VehicleInfo({ vehicle }) {
 
   const navigate = useNavigate();
 
+  // Xử lý các thao tác của người dùng
+  // Thao tác chọn xe
   const handleChooseVehicle = () => {
     dispatch(actions.setVehicle(vehicle));
   };
 
+  // Thao tác đặt xe
   const handleBookCar = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
@@ -38,6 +41,7 @@ export default function VehicleInfo({ vehicle }) {
   }, [hour]);
 
   return (
+    // Hiển thị thông tin tuyến xe
     <Card css={{ p: '$6', mw: '750px' }}>
       <Card.Body
         css={{

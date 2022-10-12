@@ -15,6 +15,7 @@ export default function Payment() {
 
   if (!userInfo.name) return <Navigate to="/" />;
 
+  // Thao tác đặt vé của người dùng
   const handleBuyTicket = () => {
     const body = {
       carLineId: chooseVehicle.id,
@@ -50,6 +51,7 @@ export default function Payment() {
   };
 
   return (
+    // Giao diện màn hình thanh toán
     <Container sm css={{ mt: '$10' }}>
       <Grid.Container gap={2}>
         <Grid xs={8} css={{ fd: 'column', gap: '$6' }}>

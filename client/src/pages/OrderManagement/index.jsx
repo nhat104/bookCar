@@ -3,6 +3,7 @@ import { Card, Collapse, Container, Grid, Text } from '@nextui-org/react';
 
 export default () => {
   return (
+    // Giao diện màn hình lịch sử mua vé
     <Container sm css={{ mt: '$10' }}>
       <Card css={{ p: '$6', mw: '750px' }}>
         <Card.Body css={{ pt: '$2', fd: 'row' }}>

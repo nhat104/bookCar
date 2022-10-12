@@ -5,6 +5,28 @@ import Car from '../models/car.js';
 import Ticket from '../models/ticket.js';
 import TimePlace from '../models/time-place.js';
 
+export const getCars = async (req, res) => {
+  try {
+    const cars = await Car.findAll({ include: [{ model: CarType }] });
+    res.status(200).json({
+      message: 'success',
+      status: 200,
+      data: cars.map((car) => ({
+        id: car.id,
+        name: car.name,
+        image: car.image,
+        desc: car.desc,
+        licensePlate: car.licensePlate,
+        seat: car.carType.seat,
+        price: car.carType.price,
+      })),
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+// Xử lý logic tìm tuyến xe
 export const getCarLine = async (req, res, next) => {
   const { placeFromId, placeToId, date } = req.body;
   try {

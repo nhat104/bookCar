@@ -18,6 +18,7 @@ app.use((_, res, next) => {
   next();
 });
 
+// Các route trong ứng dụng
 app.use('/auth', authRoutes);
 app.use(carRoutes);
 app.use(placeRoutes);
@@ -30,6 +31,7 @@ app.use((error, _req, res, _next) => {
   res.status(status).json({ message: 'fail', status, data: message });
 });
 
+// Xây dựng các bảng trong database và associations giữa các bảng
 Place.belongsTo(City, { constraints: true, onDelete: 'CASCADE' });
 City.hasMany(Place);
 TimePlace.belongsTo(Place, { constraints: true, onDelete: 'CASCADE' });
@@ -40,8 +42,6 @@ CarType.hasMany(Car, { foreignKey: 'carTypeId' });
 Car.belongsTo(CarType);
 CarInPlace.belongsTo(Place, { as: 'placeFrom', foreignKey: 'placeFromId' });
 CarInPlace.belongsTo(Place, { as: 'placeTo', foreignKey: 'placeToId' });
-// Guess.belongsToMany(CarInPlace, { through: Ticket });
-// CarInPlace.belongsToMany(Guess, { through: Ticket });
 Ticket.belongsTo(Guess);
 Guess.hasMany(Ticket);
 Ticket.belongsTo(CarInPlace);

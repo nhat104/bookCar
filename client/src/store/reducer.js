@@ -1,3 +1,5 @@
+// Lưu thông tin tuyến xe, thời gian đi, thông tin người đặt xe
+
 export const initState = {
   placeFrom: '',
   placeTo: '',

@@ -1,10 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import { ClientLayout, AdminLayout } from './layout';
+import Admin from './pages/Admin';
+import DriverRate from './pages/DriverRate';
 import HomePage from './pages/HomePage';
 import OrderManagement from './pages/OrderManagement';
 import Payment from './pages/Payment';
-import TimeReport from './pages/TimeReport';
+import Report from './pages/Report';
 import { Provider } from './store';
 
 const AuthRoute = ({ type = 'private', children }) => {
@@ -31,7 +33,11 @@ function App() {
           <Route path="ticket-info" element={<OrderManagement />} />
         </Route>
         <Route path="/admin" element={<AuthRoute type="private" />}>
-          <Route path="" element={<TimeReport />} />
+          <Route path="" element={<Admin />} />
+          <Route path="report">
+            <Route path="" element={<Report />} />
+            <Route path="driver-rate" element={<DriverRate />} />
+          </Route>
         </Route>
       </Routes>
     </Provider>

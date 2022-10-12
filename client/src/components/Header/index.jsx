@@ -4,6 +4,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import baseApiRequest from '../../api/baseApiRequest';
 import { AcmeLogo } from '../logo';
 
+// Giao diện Header cho các màn hình client
 export default function Header() {
   const [openLogin, setOpenLogin] = useState(false);
   const { pathname } = useLocation();

@@ -1,6 +1,7 @@
 import City from '../models/city.js';
 import Place from '../models/place.js';
 
+// Xử lý logic tìm điểm đi, điểm đến theo thành phố
 export const getPlace = async (req, res, next) => {
   const { city: cityName } = req.body;
   try {
