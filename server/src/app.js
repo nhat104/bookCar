@@ -64,13 +64,18 @@ sequelize
   // .sync({ force: true }) // reset all database
   .sync()
   // .then(async () => {
+  //   // Tạo data tài xế
   //   Driver.bulkCreate(drivers);
+
+  //   // Tạo data ô tô
   //   carTypes.forEach(async (item, index) => {
   //     const carType = await CarType.create(item);
   //     cars[index].forEach((car) => {
   //       carType.createCar(car);
   //     });
   //   });
+
+  //   // Tạo data thành phố, điểm đi tương ứng
   //   cities.forEach(async (item) => {
   //     const city = await City.create({ name: item.name, cityCode: item.code });
   //     item.places.forEach(async (place) => {
@@ -80,6 +85,8 @@ sequelize
   //       });
   //     });
   //   });
+
+  //   // Tạo admin
   //   User.create({
   //     name: 'Đỗ Uyên',
   //     username: 'admin',
@@ -87,7 +94,9 @@ sequelize
   //     role: 'admin',
   //   });
   // })
+
   // .then(async () => {
+  //   // Tạo các tuyến xe
   //   const allCity = await City.findAll();
   //   const place1 = await Place.findAll({ where: { cityId: allCity[0].id } });
   //   const place2 = await Place.findAll({ where: { cityId: allCity[1].id } });
@@ -108,7 +117,9 @@ sequelize
   //     });
   //   });
   // })
+
   // .then(async () => {
+  //   // Tạo vé đã mua
   //   guesses.forEach(async (guessItem) => {
   //     const guess = await Guess.create(guessItem.info);
   //     guessItem.tickets.forEach(async (ticketItem) => {
