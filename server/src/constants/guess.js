@@ -1,8 +1,8 @@
 export const guesses = [
   {
     info: {
-      name: 'Michael Jordan',
-      phone: '0123484121',
+      name: 'Đỗ Thị Mỹ Uyên',
+      phone: '0828640605',
       address: 'Xuan Bac, Xuan Truong, Nam Dinh',
       cccd: '65463564654',
     },
@@ -27,7 +27,7 @@ export const guesses = [
   },
   {
     info: {
-      name: 'Kobe Bryant',
+      name: 'Nguyễn Thị Hồng',
       phone: '0123484123',
       address: 'Ha Nam, Nam Dinh',
       cccd: '023134654654',
@@ -53,7 +53,7 @@ export const guesses = [
   },
   {
     info: {
-      name: 'Stephen Curry',
+      name: 'Mai Văn Minh',
       phone: '0123484124',
       address: 'Hai Hau, Nam Dinh',
       cccd: '654654654654',
@@ -79,7 +79,7 @@ export const guesses = [
   },
   {
     info: {
-      name: 'Kevin Durant',
+      name: 'Hoàng Trà Giang',
       phone: '0123484126',
       address: 'TP Nam Dinh, Nam Dinh',
       cccd: '654654654654',

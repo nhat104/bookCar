@@ -1,7 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import sequelize from './utils/database.js';
-import { authRoutes, placeRoutes, carRoutes, ticketRoutes, reportRoutes } from './routes/index.js';
+import {
+  authRoutes,
+  placeRoutes,
+  carRoutes,
+  ticketRoutes,
+  reportRoutes,
+  driverRoutes,
+} from './routes/index.js';
 import { Driver, User } from './models/index.js';
 import { City, Place, Car, TimePlace, CarType, CarInPlace, Guess, Ticket } from './models/index.js';
 import { cars, carTypes, cities, drivers, guesses } from './constants/index.js';
@@ -23,6 +30,7 @@ app.use('/auth', authRoutes);
 app.use(carRoutes);
 app.use(placeRoutes);
 app.use(ticketRoutes);
+app.use(driverRoutes);
 app.use('/report', reportRoutes);
 
 app.use((error, _req, res, _next) => {
@@ -46,7 +54,7 @@ Ticket.belongsTo(Guess);
 Guess.hasMany(Ticket);
 Ticket.belongsTo(CarInPlace);
 CarInPlace.hasMany(Ticket);
-Ticket.belongsTo(Driver);
+Ticket.belongsTo(Driver, { onDelete: 'SET NULL', onUpdate: 'CASCADE' });
 Driver.hasMany(Ticket);
 
 // Place.belongsToMany(Place, {

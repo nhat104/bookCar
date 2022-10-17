@@ -9,14 +9,10 @@ const Driver = sequelize.define('driver', {
     primaryKey: true,
   },
   name: Sequelize.STRING,
+  gender: Sequelize.STRING,
   dateOfBirth: Sequelize.DATE,
-  image: Sequelize.STRING(1023),
+  avatar: Sequelize.STRING(1023),
   phone: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  code: {
     type: Sequelize.STRING,
     allowNull: false,
     unique: true,

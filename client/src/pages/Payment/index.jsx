@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import baseApiRequest from '../../api/baseApiRequest';
 import { useStore } from '../../store';
+import { toVND } from '../../utils';
 
 export default function Payment() {
   const [paymentMethod, setPaymentMethod] = useState('Visa Card');
@@ -92,7 +93,7 @@ export default function Payment() {
             <Card.Body css={{ px: '$8', fd: 'row', jc: 'space-between' }}>
               <Text size="$xl">Tổng tiền</Text>
               <Text size="$xl" color="primary">
-                200.000đ
+                {toVND(chooseVehicle.price)}
               </Text>
             </Card.Body>
           </Card>

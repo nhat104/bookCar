@@ -20,10 +20,7 @@ const Ticket = sequelize.define('ticket', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  driverId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
+  rate: DataTypes.INTEGER,
 });
 
 export default Ticket;

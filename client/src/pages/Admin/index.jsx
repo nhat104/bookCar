@@ -65,7 +65,7 @@ export default () => {
               <Card isPressable>
                 <Card.Body css={{ p: 0 }}>
                   <Card.Image
-                    src="/car1.png"
+                    src="https://iili.io/t27Mml.png"
                     objectFit="cover"
                     width="100%"
                     // height={140}

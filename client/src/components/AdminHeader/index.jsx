@@ -63,4 +63,8 @@ const navBars = [
     name: 'Xếp hạng tài xế',
     path: '/admin/report/driver-rate',
   },
+  {
+    name: 'Quản lý tài xế',
+    path: '/admin/driver-management',
+  },
 ];

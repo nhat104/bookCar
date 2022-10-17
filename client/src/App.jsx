@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import { ClientLayout, AdminLayout } from './layout';
 import Admin from './pages/Admin';
+import DriverManagement from './pages/DriverManagement';
 import DriverRate from './pages/DriverRate';
 import HomePage from './pages/HomePage';
 import OrderManagement from './pages/OrderManagement';
@@ -34,6 +35,7 @@ function App() {
         </Route>
         <Route path="/admin" element={<AuthRoute type="private" />}>
           <Route path="" element={<Admin />} />
+          <Route path="driver-management" element={<DriverManagement />} />
           <Route path="report">
             <Route path="" element={<Report />} />
             <Route path="driver-rate" element={<DriverRate />} />
