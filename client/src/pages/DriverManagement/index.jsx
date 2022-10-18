@@ -175,6 +175,7 @@ export default () => {
         </Modal.Header>
         <Modal.Body>
           <Text>Bạn có chắc chắn xóa tài xế này?</Text>
+          <Text>Dữ liệu về các chuyến xe tài xế này đã đi sẽ bị thay đổi!</Text>
         </Modal.Body>
         <Modal.Footer>
           <Button auto flat onPress={closeHandler}>

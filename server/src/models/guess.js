@@ -11,7 +11,11 @@ const Guess = sequelize.define('guess', {
   name: DataTypes.STRING,
   phone: DataTypes.STRING,
   address: DataTypes.STRING,
-  cccd: DataTypes.STRING,
+  cccd: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
 });
 
 export default Guess;

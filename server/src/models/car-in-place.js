@@ -22,6 +22,7 @@ const CarInPlace = sequelize.define('carsPlace', {
   placeToId: {
     type: DataTypes.INTEGER,
   },
+  emptySeat: DataTypes.INTEGER,
   quantity: {
     type: DataTypes.INTEGER,
   },

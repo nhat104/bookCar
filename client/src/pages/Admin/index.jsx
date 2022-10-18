@@ -1,63 +1,61 @@
-import { Card, Container, Grid, Row, Text } from '@nextui-org/react';
+import {
+  Card,
+  Container,
+  Grid,
+  Loading,
+  Row,
+  Table,
+  Text,
+} from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import baseApiRequest from '../../api/baseApiRequest';
 import { toVND } from '../../utils';
 
 export default () => {
   const [cars, setCars] = useState([]);
+  const [tableData, setTableData] = useState({ rows: null, columns: null });
 
   useEffect(() => {
+    baseApiRequest.get(`/report/customer`).then((res) => {
+      setTableData(res.data);
+    });
+
     baseApiRequest.get('/cars').then((res) => {
       setCars(res.data);
     });
   }, []);
 
-  const list = [
-    {
-      title: 'Orange',
-      img: '/images/fruit-1.jpeg',
-      price: '$5.50',
-    },
-    {
-      title: 'Tangerine',
-      img: '/images/fruit-2.jpeg',
-      price: '$3.00',
-    },
-    {
-      title: 'Cherry',
-      img: '/images/fruit-3.jpeg',
-      price: '$10.00',
-    },
-    {
-      title: 'Lemon',
-      img: '/images/fruit-4.jpeg',
-      price: '$5.30',
-    },
-    {
-      title: 'Avocado',
-      img: '/images/fruit-5.jpeg',
-      price: '$15.70',
-    },
-    {
-      title: 'Lemon 2',
-      img: '/images/fruit-6.jpeg',
-      price: '$8.00',
-    },
-    {
-      title: 'Banana',
-      img: '/images/fruit-7.jpeg',
-      price: '$7.50',
-    },
-    {
-      title: 'Watermelon',
-      img: '/images/fruit-8.jpeg',
-      price: '$12.20',
-    },
-  ];
-
   return (
     <Container md>
-      <Text h2>Quản lý xe</Text>
+      <Text h2>Báo cáo chăm sóc khách hàng</Text>
+      {tableData.rows ? (
+        tableData.rows.length > 0 ? (
+          <Table aria-label="table" css={{ height: 'auto' }}>
+            <Table.Header columns={tableData.columns}>
+              {(column) => (
+                <Table.Column key={column.id}>{column.label}</Table.Column>
+              )}
+            </Table.Header>
+            <Table.Body items={tableData.rows}>
+              {(item) => (
+                <Table.Row key={item.stt}>
+                  {(columnKey) => <Table.Cell>{item[columnKey]}</Table.Cell>}
+                </Table.Row>
+              )}
+            </Table.Body>
+          </Table>
+        ) : (
+          <Text h4 css={{ mt: '$10' }}>
+            Không có dữ liệu
+          </Text>
+        )
+      ) : (
+        <Loading color="primary" size="lg" />
+      )}
+
+      <Text h2 css={{ mt: '$20' }}>
+        Quản lý xe
+      </Text>
       <Grid.Container gap={2} css={{ mh: '536px', overflow: 'auto' }}>
         {cars &&
           cars.map((car) => (
@@ -65,10 +63,10 @@ export default () => {
               <Card isPressable>
                 <Card.Body css={{ p: 0 }}>
                   <Card.Image
-                    src="https://iili.io/t27Mml.png"
+                    src={car.image}
                     objectFit="cover"
                     width="100%"
-                    // height={140}
+                    height={140}
                     alt={car.name}
                   />
                 </Card.Body>

@@ -21,6 +21,10 @@ const Driver = sequelize.define('driver', {
     type: Sequelize.FLOAT,
     defaultValue: 0,
   },
+  rateCount: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
 });
 
 export default Driver;

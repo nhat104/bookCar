@@ -31,6 +31,82 @@ export const buyTicket = async (req, res, next) => {
   }
 };
 
+export const allTicket = async (req, res, next) => {
+  try {
+    const tickets = await Ticket.findAll({
+      attributes: ['id', 'date', 'hour', 'rate'],
+      include: [
+        {
+          model: CarInPlace,
+          attributes: ['id'],
+          include: [
+            {
+              model: Car,
+              attributes: ['image', 'desc', 'licensePlate'],
+              include: [{ model: CarType, attributes: ['seat', 'price'] }],
+            },
+            { model: Place, attributes: ['name'], as: 'placeFrom' },
+            { model: Place, attributes: ['name'], as: 'placeTo' },
+          ],
+        },
+        { model: Driver, attributes: ['id', 'name', 'phone'] },
+      ],
+    });
+    res.status(200).json({
+      message: 'success',
+      status: 200,
+      data: {
+        tickets: tickets.map((ticket) => ({
+          id: ticket.id,
+          date: ticket.date,
+          hour: ticket.hour.split(':')[0] + 'h' + ticket.hour.split(':')[1],
+          rate: ticket.rate,
+          car: {
+            image: ticket.carsPlace.car.image,
+            desc: ticket.carsPlace.car.desc,
+            licensePlate: ticket.carsPlace.car.licensePlate,
+            seat: ticket.carsPlace.car.carType.seat,
+            price: ticket.carsPlace.car.carType.price,
+          },
+          placeFrom: ticket.carsPlace.placeFrom.name,
+          placeTo: ticket.carsPlace.placeTo.name,
+          driver: ticket.driver,
+        })),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const rateTicket = async (req, res, next) => {
+  const { id, rate } = req.body;
+  try {
+    const ticket = await Ticket.findOne({
+      where: { id },
+      include: [{ model: Driver, attributes: ['id', 'rate', 'rateCount'] }],
+    });
+    const driver = await Driver.findOne({ where: { id: ticket.driver.id } });
+    driver.rate = (driver.rate * driver.rateCount + rate) / (driver.rateCount + 1);
+    driver.rateCount += 1;
+    await driver.save();
+
+    ticket.rate = rate;
+    await ticket.save();
+
+    res.status(200).json({
+      message: 'success',
+      status: 200,
+      data: {
+        id: ticket.id,
+        rate: ticket.rate,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Tạo data báo cáo theo ngày
 export const reportByDate = async (req, res, next) => {
   // ngày, số vé bán được, doanh thu
@@ -326,6 +402,48 @@ export const reportByDriverRate = async (req, res, next) => {
           driver: driver.toJSON().name,
           rate: driver.toJSON().rate,
         })),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const reportByCustomer = async (req, res, next) => {
+  try {
+    const customerData = await Ticket.findAll({
+      attributes: ['id', [fn('count', col('guess.cccd')), 'orderCount']],
+      include: [{ model: Guess, attributes: ['cccd'] }],
+      group: ['guess.cccd'],
+    });
+
+    const customerCount = customerData.length;
+    const newCustomerCount = customerData.filter(
+      (customer) => customer.toJSON().orderCount === 1
+    ).length;
+    const orderCount = customerData.reduce(
+      (sum, customer) => sum + customer.toJSON().orderCount,
+      0
+    );
+
+    res.status(200).json({
+      message: 'success',
+      status: 200,
+      data: {
+        columns: [
+          { id: 'stt', label: 'STT' },
+          { id: 'customerCount', label: 'Số lượng khách hàng' },
+          { id: 'newCustomerCount', label: 'Số lượng khách hàng mới' },
+          { id: 'orderCount', label: 'Số lượng đơn hàng' },
+        ],
+        rows: [
+          {
+            stt: '1',
+            customerCount,
+            newCustomerCount,
+            orderCount,
+          },
+        ],
       },
     });
   } catch (error) {

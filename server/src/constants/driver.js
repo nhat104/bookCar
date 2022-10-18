@@ -7,6 +7,7 @@ export const drivers = [
     phone: '0861894278',
     dateOfBirth: '',
     rate: 4.7,
+    rateCount: 20,
   },
   {
     name: 'Hoàng Văn Bình',
@@ -16,6 +17,7 @@ export const drivers = [
     phone: '0831561319',
     dateOfBirth: '',
     rate: 4.6,
+    rateCount: 10,
   },
   {
     name: 'Trần Hoàng Nam',
@@ -25,6 +27,7 @@ export const drivers = [
     phone: '0962788423',
     dateOfBirth: '',
     rate: 4.8,
+    rateCount: 15,
   },
   {
     name: 'Nguyễn Huy Hoàng',
@@ -34,6 +37,7 @@ export const drivers = [
     phone: '0948123645',
     dateOfBirth: '',
     rate: 4.5,
+    rateCount: 13,
   },
   {
     name: 'Phạm Văn Minh',
@@ -43,5 +47,6 @@ export const drivers = [
     phone: '082875345',
     dateOfBirth: '',
     rate: 5.0,
+    rateCount: 5,
   },
 ];

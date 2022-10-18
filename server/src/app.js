@@ -108,19 +108,23 @@ sequelize
   //   const allCity = await City.findAll();
   //   const place1 = await Place.findAll({ where: { cityId: allCity[0].id } });
   //   const place2 = await Place.findAll({ where: { cityId: allCity[1].id } });
-  //   place1.forEach((placeFrom) => {
-  //     place2.forEach((placeTo) => {
+  //   place1.forEach(async (placeFrom) => {
+  //     place2.forEach(async (placeTo) => {
+  //       const car = await Car.findOne({ order: sequelize.random(), include: CarType });
+  //       const emptySeat = car.toJSON().carType.seat;
   //       CarInPlace.create({
   //         placeFromId: placeFrom.id,
   //         placeToId: placeTo.id,
   //         quantity: 1,
-  //         carId: Math.floor(Math.random() * 12) + 1,
+  //         carId: car.id,
+  //         emptySeat,
   //       });
   //       CarInPlace.create({
   //         placeFromId: placeTo.id,
   //         placeToId: placeFrom.id,
   //         quantity: 1,
-  //         carId: Math.floor(Math.random() * 12) + 1,
+  //         carId: car.id,
+  //         emptySeat,
   //       });
   //     });
   //   });
@@ -138,15 +142,17 @@ sequelize
   //         order: sequelize.random(),
   //       });
   //       const timePart = ticketItem.date.split(' ');
-  //       Ticket.create({
-  //         payment: ticketItem.payment,
-  //         date: timePart[0],
-  //         hour: timePart[1],
-  //         guessId: guess.id,
-  //         carsPlaceId: carLine.id,
-  //         driverId: driver.id,
-  //       });
-  //       // await carInPlace.update({ quantity: carInPlace.quantity - 1 });
+  //       if (carLine.emptySeat > 0) {
+  //         carLine.update({ emptySeat: carLine.emptySeat - 1 });
+  //         Ticket.create({
+  //           payment: ticketItem.payment,
+  //           date: timePart[0],
+  //           hour: timePart[1],
+  //           guessId: guess.id,
+  //           carsPlaceId: carLine.id,
+  //           driverId: driver.id,
+  //         });
+  //       }
   //     });
   //   });
   // })
