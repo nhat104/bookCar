@@ -63,6 +63,10 @@ export default () => {
     }
   };
 
+  const handleAddDriver = () => {
+    setOpenEditModal(driverData.drivers.length);
+  };
+
   const handleEditDriver = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
@@ -72,27 +76,45 @@ export default () => {
       gender: data.get('gender'),
       dateOfBirth: data.get('dateOfBirth'),
     };
-    const driverId = driverData.drivers[openEditModal].id;
-    baseApiRequest.put(`/driver/${driverId}`, driver).then((res) => {
-      const newDrivers = [...driverData.drivers];
-      newDrivers[openEditModal] = { index: openEditModal, ...res.data };
-      setDriverData({ ...driverData, drivers: newDrivers });
-      setOpenEditModal(null);
-    });
+
+    if (openEditModal === driverData.drivers.length) {
+      baseApiRequest.post(`/driver`, driver).then((res) => {
+        setDriverData({
+          ...driverData,
+          drivers: [
+            ...driverData.drivers,
+            { ...res.data.driver, index: driverData.drivers.length },
+          ],
+        });
+        setOpenEditModal(null);
+      });
+    } else {
+      const driverId = driverData.drivers[openEditModal].id;
+      baseApiRequest.put(`/driver/${driverId}`, driver).then((res) => {
+        const newDrivers = [...driverData.drivers];
+        newDrivers[openEditModal] = { index: openEditModal, ...res.data };
+        setDriverData({ ...driverData, drivers: newDrivers });
+        setOpenEditModal(null);
+      });
+    }
   };
 
   const handleDeleteDriver = () => {
     const driverId = driverData.drivers[openDeleteModal].id;
-    baseApiRequest.delete(`/driver/${driverId}`).then((res) => {
+    baseApiRequest.delete(`/driver/${driverId}`).then(() => {
       const newDrivers = [...driverData.drivers];
       newDrivers.splice(openDeleteModal, 1);
       setDriverData({ ...driverData, drivers: newDrivers });
-      setOpenDeleteModal(false);
+      setOpenDeleteModal(null);
     });
   };
 
   return (
     <Container md css={{ mt: '$8' }}>
+      <Text h3>Quản lý tài xế</Text>
+      <Button auto onPress={handleAddDriver}>
+        Thêm tài xế
+      </Button>
       {driverData.drivers.length ? (
         <Table css={{ height: 'auto', minWidth: '100%' }} selectionMode="none">
           <Table.Header columns={driverData.columns}>
@@ -138,25 +160,41 @@ export default () => {
               label="Họ tên"
               name="name"
               required
-              initialValue={driverData.drivers[openEditModal].name || ''}
+              initialValue={
+                openEditModal < driverData.drivers.length
+                  ? driverData.drivers[openEditModal].name
+                  : ''
+              }
             />
             <Input
               label="Ngày sinh"
               name="dateOfBirth"
-              initialValue={driverData.drivers[openEditModal].dateOfBirth || ''}
+              initialValue={
+                openEditModal < driverData.drivers.length
+                  ? driverData.drivers[openEditModal].dateOfBirth
+                  : ''
+              }
               type="date"
             />
             <Input
               label="Giới tính"
               name="gender"
-              initialValue={driverData.drivers[openEditModal].gender || ''}
+              initialValue={
+                openEditModal < driverData.drivers.length
+                  ? driverData.drivers[openEditModal].gender
+                  : ''
+              }
             />
             <Input
               label="Số điện thoại"
               name="phone"
               required
               type="number"
-              initialValue={driverData.drivers[openEditModal].phone || ''}
+              initialValue={
+                openEditModal < driverData.drivers.length
+                  ? driverData.drivers[openEditModal].phone
+                  : ''
+              }
             />
           </Modal.Body>
           <Modal.Footer>
@@ -169,7 +207,7 @@ export default () => {
           </Modal.Footer>
         </Modal>
       )}
-      <Modal open={openDeleteModal} onClose={closeHandler}>
+      <Modal open={openDeleteModal !== null} onClose={closeHandler}>
         <Modal.Header>
           <Text size={18}>Xác nhận</Text>
         </Modal.Header>
