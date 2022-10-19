@@ -1,9 +1,11 @@
 import express from 'express';
-import { deleteDriver, editDriver, getDrivers } from '../controllers/driver.js';
+import { addDriver, deleteDriver, editDriver, getDrivers } from '../controllers/driver.js';
 
 const router = express.Router();
 
 router.get('/drivers', getDrivers);
+
+router.post('/driver', addDriver);
 
 router.put('/driver/:id', editDriver);
 

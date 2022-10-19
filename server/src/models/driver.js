@@ -10,7 +10,7 @@ const Driver = sequelize.define('driver', {
   },
   name: Sequelize.STRING,
   gender: Sequelize.STRING,
-  dateOfBirth: Sequelize.DATE,
+  dateOfBirth: Sequelize.DATEONLY,
   avatar: Sequelize.STRING(1023),
   phone: {
     type: Sequelize.STRING,

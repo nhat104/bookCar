@@ -2,6 +2,7 @@ import { Driver } from '../models/index.js';
 
 export const getDrivers = async (req, res) => {
   const drivers = await Driver.findAll();
+
   res.status(200).json({
     message: 'success',
     status: 200,
@@ -16,6 +17,26 @@ export const getDrivers = async (req, res) => {
         index: idx,
         ...driver.toJSON(),
       })),
+    },
+  });
+};
+
+export const addDriver = async (req, res) => {
+  const { name, gender, phone, dateOfBirth } = req.body;
+  const driver = await Driver.create({
+    name,
+    gender,
+    dateOfBirth,
+    avatar: 'https://i.pravatar.cc/150?u=a048581f4e29026701d',
+    phone,
+    rate: 0,
+    rateCount: 0,
+  });
+  res.status(201).json({
+    message: 'success',
+    status: 201,
+    data: {
+      driver: driver.toJSON(),
     },
   });
 };
