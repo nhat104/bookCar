@@ -59,7 +59,7 @@ export const allTicket = async (req, res, next) => {
         tickets: tickets.map((ticket) => ({
           id: ticket.id,
           date: ticket.date,
-          hour: ticket.hour.split(':')[0] + 'h' + ticket.hour.split(':')[1],
+          hour: ticket.hour,
           rate: ticket.rate,
           car: {
             image: ticket.carsPlace.car.image,
@@ -73,6 +73,26 @@ export const allTicket = async (req, res, next) => {
           driver: ticket.driver,
         })),
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const cancelTicket = async (req, res, next) => {
+  const { id } = req.body;
+  try {
+    const ticket = await Ticket.findOne({ where: { id } });
+    if (!ticket) {
+      return res.status(404).json({
+        message: 'Ticket not found',
+        status: 404,
+      });
+    }
+    await ticket.destroy();
+    res.status(200).json({
+      message: 'success',
+      status: 200,
     });
   } catch (error) {
     next(error);
