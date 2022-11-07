@@ -1,15 +1,17 @@
 import { Button, Navbar, Text } from '@nextui-org/react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { actions, useStore } from '../../store';
 import { AcmeLogo } from '../logo';
 
 // Giao diện Header cho các màn hình admin
 export default function AdminHeader() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const [{}, dispatch] = useStore();
 
   const handleLogout = () => {
+    dispatch(actions.setUser({}));
     localStorage.removeItem('user');
-    localStorage.removeItem('token');
     navigate('/');
   };
 

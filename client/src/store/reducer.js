@@ -16,6 +16,10 @@ export const initState = {
     address: '',
     cccd: '',
     note: '',
+    username: '',
+    password: '',
+    role: '',
+    ...JSON.parse(localStorage.getItem('user')),
   },
 };
 

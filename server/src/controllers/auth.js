@@ -1,8 +1,7 @@
 import { validationResult } from 'express-validator';
 import User from '../models/user.js';
-import jwt from 'jsonwebtoken';
 
-export const signup = (req, res, next) => {
+export const signup = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const message = errors.array().reduce((acc, err) => {
@@ -10,23 +9,38 @@ export const signup = (req, res, next) => {
     }, {});
     const error = {
       message: message || 'Validation failed.',
-      statusCode: 422,
+      status: 422,
     };
     console.log(errors.array());
-    throw error;
+    // throw error;
+    return next(error);
   }
-  const { name, username, password, role = 'user' } = req.body;
+  const { name, username, password, address, phone, cccd, role = 'user' } = req.body;
 
-  return User.create({ name, username, password, role })
-    .then((user) => {
-      res.status(201).json({ message: 'User created!', userId: user.id });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
+  try {
+    const user = await User.create({ name, username, password, address, phone, cccd, role });
+    res.status(201).json({
+      message: 'User created!',
+      status: 201,
+      data: {
+        user: {
+          id: user.id.toString(),
+          username,
+          name: user.name,
+          role: user.role,
+          address: user.address,
+          phone: user.phone,
+          cccd: user.cccd,
+          role: user.role,
+        },
+      },
     });
+  } catch (err) {
+    if (!err.status) {
+      err.status = 500;
+    }
+    next(err);
+  }
 };
 
 export const login = (req, res, next) => {
@@ -34,7 +48,7 @@ export const login = (req, res, next) => {
   if (!errors.isEmpty()) {
     const error = {
       message: errors.array()[0].msg || 'Validation failed.',
-      statusCode: 422,
+      status: 422,
     };
     console.log(errors.array());
     throw error;
@@ -45,43 +59,29 @@ export const login = (req, res, next) => {
     .then((user) => {
       if (!user) {
         const error = new Error('Wrong username or password. Please try again.');
-        error.statusCode = 401;
+        error.status = 401;
         throw error;
       }
-      const token = jwt.sign(
-        {
-          username: user.username,
-          userId: user.id.toString(),
-        },
-        'some-supersecret',
-        { expiresIn: '1h' }
-      );
       res.status(200).json({
         message: 'successful!',
         status: 200,
         data: {
-          token,
           user: {
             id: user.id.toString(),
             username,
             name: user.name,
-            email: user.email,
+            role: user.role,
+            address: user.address,
+            phone: user.phone,
+            cccd: user.cccd,
             role: user.role,
           },
         },
       });
-      // return user.password === password;
     })
-    // .then((isEqual) => {
-    //   if (!isEqual) {
-    //     const error = new Error('Wrong password!');
-    //     error.statusCode = 401;
-    //     throw error;
-    //   }
-    // })
     .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
+      if (!err.status) {
+        err.status = 500;
       }
       next(err);
     });

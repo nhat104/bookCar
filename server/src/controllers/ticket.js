@@ -1,5 +1,5 @@
 import { col, fn, literal, Op } from 'sequelize';
-import { Car, CarInPlace, CarType, Driver, Guess, Place, Ticket } from '../models/index.js';
+import { Car, CarInPlace, CarType, Driver, Guess, Place, Ticket, User } from '../models/index.js';
 
 // Xử lý logic đặt vé
 export const buyTicket = async (req, res, next) => {
@@ -32,7 +32,11 @@ export const buyTicket = async (req, res, next) => {
 };
 
 export const allTicket = async (req, res, next) => {
+  const { username } = req.body;
+
   try {
+    const userCccd = (await User.findOne({ where: { username } })).toJSON().cccd;
+    console.log(userCccd);
     const tickets = await Ticket.findAll({
       attributes: ['id', 'date', 'hour', 'rate'],
       include: [
@@ -50,6 +54,7 @@ export const allTicket = async (req, res, next) => {
           ],
         },
         { model: Driver, attributes: ['id', 'name', 'phone'] },
+        { model: Guess, attributes: ['cccd'], where: { cccd: userCccd } },
       ],
     });
     res.status(200).json({

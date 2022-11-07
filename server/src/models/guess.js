@@ -14,7 +14,6 @@ const Guess = sequelize.define('guess', {
   cccd: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
 });
 

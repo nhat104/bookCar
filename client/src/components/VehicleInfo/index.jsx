@@ -7,7 +7,8 @@ import { toVND } from '../../utils';
 
 export default function VehicleInfo({ vehicle }) {
   const [hour, setHour] = useState(new Set([vehicle.times[0].time]));
-  const [{ placeFrom, placeTo, chooseVehicle, time }, dispatch] = useStore();
+  const [{ placeFrom, placeTo, chooseVehicle, time, userInfo }, dispatch] =
+    useStore();
   const [emptySeat, setEmptySeat] = useState(0);
 
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function VehicleInfo({ vehicle }) {
     e.preventDefault();
     const data = new FormData(e.target);
     const name = data.get('name');
-    const phone = '0' + data.get('phone');
+    const phone = data.get('phone');
     const address = data.get('address');
     const cccd = data.get('cccd');
     const note = data.get('note') || '';
@@ -128,7 +129,14 @@ export default function VehicleInfo({ vehicle }) {
             }}
           >
             <Text h4>Nhập thông tin</Text>
-            <Input required label="Họ tên" rounded fullWidth name="name" />
+            <Input
+              required
+              label="Họ tên"
+              rounded
+              fullWidth
+              name="name"
+              initialValue={userInfo.name}
+            />
             <Input
               label="Số điện thoại"
               labelLeft="(VN)+84"
@@ -136,15 +144,25 @@ export default function VehicleInfo({ vehicle }) {
               name="phone"
               fullWidth
               required
+              initialValue={userInfo.phone}
               // pattern="^((\+84-?)|0)?[0-9]{9}$"
               pattern="[0-9]*"
             />
-            <Input label="Địa chỉ" required rounded name="address" fullWidth />
+            <Input
+              label="Địa chỉ"
+              required
+              rounded
+              name="address"
+              fullWidth
+              initialValue={userInfo.address}
+            />
             <Input
               label="Căn cước công dân"
               required
               rounded
               fullWidth
+              initialValue={userInfo.cccd}
+              readOnly={userInfo.role === 'user'}
               name="cccd"
               pattern="[0-9]*"
             />

@@ -98,6 +98,7 @@ sequelize
   //   User.create({
   //     name: 'Đỗ Uyên',
   //     username: 'admin',
+  //     phone: '541354650',
   //     password: '123456',
   //     role: 'admin',
   //   });

@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
-import { ClientLayout, AdminLayout } from './layout';
+import { ClientLayout, AdminLayout } from './layouts';
 import Admin from './pages/Admin';
 import DriverManagement from './pages/DriverManagement';
 import DriverRate from './pages/DriverRate';

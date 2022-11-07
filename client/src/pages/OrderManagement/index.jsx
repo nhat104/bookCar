@@ -9,6 +9,7 @@ import {
 import { Card, Collapse, Container, Grid, Text } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import baseApiRequest from '../../api/baseApiRequest';
+import { useStore } from '../../store';
 import { toVND } from '../../utils';
 
 export default () => {
@@ -16,14 +17,18 @@ export default () => {
   const [pagination, setPagination] = useState({ total: 0, page: 1, limit: 3 });
   const [openCancelModel, setOpenCancelModel] = useState(0);
 
+  const [{ userInfo }] = useStore();
+
   useEffect(() => {
-    baseApiRequest.get('/all-ticket').then((res) => {
-      setTickets(res.data.tickets);
-      setPagination({
-        ...pagination,
-        total: Math.floor(res.data.tickets.length / pagination.limit) + 1,
+    baseApiRequest
+      .post('/all-ticket', { username: userInfo.username })
+      .then((res) => {
+        setTickets(res.data.tickets);
+        setPagination({
+          ...pagination,
+          total: Math.floor(res.data.tickets.length / pagination.limit) + 1,
+        });
       });
-    });
   }, []);
 
   const handleRate = (e, id) => {

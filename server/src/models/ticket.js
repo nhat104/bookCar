@@ -20,6 +20,7 @@ const Ticket = sequelize.define('ticket', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  note: DataTypes.STRING,
   rate: DataTypes.INTEGER,
 });
 

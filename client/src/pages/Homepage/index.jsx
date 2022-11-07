@@ -1,6 +1,7 @@
 import { Input, Loading, styled, Text } from '@nextui-org/react';
 import { Button, Container, Dropdown, Image } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import baseApiRequest from '../../api/baseApiRequest';
 import VehicleList from '../../components/VehicleList';
 import { actions, useStore } from '../../store';
@@ -15,12 +16,39 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const [{ time }, dispatch] = useStore();
+  const [{ time, userInfo }, dispatch] = useStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userInfo.role === 'admin') {
+      navigate('/admin');
+    }
+  }, [userInfo]);
+
+  const selectedFromValue = useMemo(
+    () => Array.from(selectFrom).join(', '),
+    [selectFrom]
+  );
+
+  const selectedToValue = useMemo(
+    () => Array.from(selectTo).join(', '),
+    [selectTo]
+  );
 
   const handleChangeLocation = () => {
     setCities([cities[1], cities[0]]);
-    setSelectFrom(selectTo);
-    setSelectTo(selectFrom);
+    const set1 = new Set(['Điểm đi']);
+    const set2 = new Set(['Điểm đến']);
+    if (selectedToValue === 'Điểm đến') {
+      setSelectFrom(set1);
+    } else {
+      setSelectFrom(selectTo);
+    }
+    if (selectedFromValue === 'Điểm đi') {
+      setSelectTo(set2);
+    } else {
+      setSelectTo(selectFrom);
+    }
     setFromPlaces(toPlaces);
     setToPlaces(fromPlaces);
   };
@@ -92,7 +120,7 @@ export default function HomePage() {
         <InputGroup as="form" onSubmit={handleSearchVehicle}>
           <Dropdown>
             <Dropdown.Button rounded flat color="primary">
-              {selectFrom}
+              {selectedFromValue}
             </Dropdown.Button>
             <Dropdown.Menu
               color="primary"
@@ -110,7 +138,7 @@ export default function HomePage() {
           </Dropdown>
           <Dropdown>
             <Dropdown.Button rounded flat color="primary">
-              {selectTo}
+              {selectedToValue}
             </Dropdown.Button>
             <Dropdown.Menu
               color="primary"

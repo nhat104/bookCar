@@ -73,7 +73,11 @@ export default () => {
       </Text>
       {tableData.rows ? (
         tableData.rows.length > 0 ? (
-          <Table aria-label="table" css={{ height: 'auto' }}>
+          <Table
+            aria-label="table"
+            selectionMode="single"
+            css={{ height: 'auto' }}
+          >
             <Table.Header columns={tableData.columns}>
               {(column) => (
                 <Table.Column key={column.id}>{column.label}</Table.Column>

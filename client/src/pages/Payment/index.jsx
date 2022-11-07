@@ -1,4 +1,4 @@
-import { Button, Checkbox, Input, Modal, Row } from '@nextui-org/react';
+import { Button, Checkbox, Image, Input, Modal, Row } from '@nextui-org/react';
 import { Card, Container, Grid, Loading, Radio, Text } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -8,29 +8,50 @@ import { toVND } from '../../utils';
 
 export default function Payment() {
   const [paymentMethod, setPaymentMethod] = useState('Visa Card');
+  const [openCardModel, setOpenCardModel] = useState(false);
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [ticket, setTicket] = useState({});
   const [{ placeFrom, placeTo, userInfo, time, chooseVehicle }] = useStore();
   const navigate = useNavigate();
 
-  if (!userInfo.name) return <Navigate to="/" />;
+  if (!userInfo.name || !placeFrom) return <Navigate to="/" />;
 
   // Thao tác đặt vé của người dùng
   const handleBuyTicket = () => {
-    const body = {
-      carLineId: chooseVehicle.id,
-      payment: paymentMethod,
-      time,
-      userInfo,
-    };
-    baseApiRequest.post('/buy-ticket', body).then((res) => {
-      setLoading(false);
-      setTicket(res.data);
-      if (res.status === 200) {
-        setOpenModal(true);
-      }
-    });
+    if (paymentMethod === 'Visa Card') {
+      setOpenCardModel(true);
+      setTimeout(() => {
+        setOpenCardModel(false);
+        const body = {
+          carLineId: chooseVehicle.id,
+          payment: paymentMethod,
+          time,
+          userInfo,
+        };
+        baseApiRequest.post('/buy-ticket', body).then((res) => {
+          setLoading(false);
+          setTicket(res.data);
+          if (res.status === 200) {
+            setOpenModal(true);
+          }
+        });
+      }, 10000);
+    } else {
+      const body = {
+        carLineId: chooseVehicle.id,
+        payment: paymentMethod,
+        time,
+        userInfo,
+      };
+      baseApiRequest.post('/buy-ticket', body).then((res) => {
+        setLoading(false);
+        setTicket(res.data);
+        if (res.status === 200) {
+          setOpenModal(true);
+        }
+      });
+    }
   };
 
   // convert yyyy-mm-dd to dd/mm/yyyy
@@ -153,12 +174,26 @@ export default function Payment() {
             <Button auto flat onPress={handleGoHome}>
               Về trang chủ
             </Button>
-            <Button auto onPress={handleGoOrders}>
-              Quản lý đơn hàng
-            </Button>
+            {userInfo.username && (
+              <Button auto onPress={handleGoOrders}>
+                Quản lý đơn hàng
+              </Button>
+            )}
           </Modal.Footer>
         </Modal>
       )}
+      <Modal
+        aria-labelledby="modal-title"
+        open={openCardModel}
+        onClose={closeHandler}
+      >
+        <Modal.Header>
+          <Text size={18}>Quét mã để thanh toán</Text>
+        </Modal.Header>
+        <Modal.Body>
+          <Image src="./bidv.jpg" alt="Card" objectFit="cover" />
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 }
